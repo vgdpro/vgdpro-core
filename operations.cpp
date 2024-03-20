@@ -3046,7 +3046,7 @@ int32 field::special_summon_rule(uint16 step, uint8 sumplayer, card* target, uin
 		int32 ct2 = get_spsummonable_count_fromex(pcard, sumplayer, sumplayer, zone, &flag2);
 		for(auto it = pgroup->it; it != pgroup->container.end(); ++it) {
 			if((*it)->current.location != LOCATION_EXTRA)
-				--ct1;
+				--ct2;
 			else
 				--ct2;
 		}
@@ -3054,8 +3054,8 @@ int32 field::special_summon_rule(uint16 step, uint8 sumplayer, card* target, uin
 			if(ct2 == 0)
 				zone = flag2;
 		} else {
-			if(ct1 == 0)
-				zone = flag1;
+			if(ct2 == 0)
+				zone = flag2;
 		}
 		uint8 positions = pcard->get_spsummonable_position(peffect, ((peffect->get_value(pcard) & 0xff00ffff) | SUMMON_TYPE_SPECIAL), POS_FACEUP, sumplayer, sumplayer);
 		move_to_field(pcard, sumplayer, sumplayer, LOCATION_MZONE, positions, FALSE, 0, FALSE, zone);
@@ -3256,7 +3256,7 @@ int32 field::special_summon_step(uint16 step, group* targets, card* target, uint
 				if(pcard->current.location == LOCATION_MZONE)
 					continue;
 				if(pcard->current.location != LOCATION_EXTRA)
-					--ct1;
+					--ct2;
 				else
 					--ct2;
 			}
@@ -3264,8 +3264,8 @@ int32 field::special_summon_step(uint16 step, group* targets, card* target, uint
 				if(ct2 == 0)
 					zone &= flag2;
 			} else {
-				if(ct1 == 0)
-					zone &= flag1;
+				if(ct2 == 0)
+					zone &= flag2;
 			}
 		}
 		uint8 sumpositions = target->get_spsummonable_position(core.reason_effect, target->summon_info & DEFAULT_SUMMON_TYPE, positions, target->summon_player, playerid);
@@ -3908,7 +3908,8 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 			         || (dest == LOCATION_DECK && !pcard->is_capable_send_to_deck(core.reason_player, send_activating))
 			         || (dest == LOCATION_REMOVED && !pcard->is_removeable(core.reason_player, pcard->sendto_param.position, reason))
 			         || (dest == LOCATION_GRAVE && !pcard->is_capable_send_to_grave(core.reason_player))
-			         || (dest == LOCATION_EXTRA && !pcard->is_capable_send_to_extra(core.reason_player)))) {
+			         //|| (dest == LOCATION_EXTRA && !pcard->is_capable_send_to_extra(core.reason_player))
+					 )) {
 				pcard->current.reason = pcard->temp.reason;
 				pcard->current.reason_player = pcard->temp.reason_player;
 				pcard->current.reason_effect = pcard->temp.reason_effect;
@@ -4912,7 +4913,7 @@ int32 field::change_position(uint16 step, group * targets, effect * reason_effec
 				} else
 					pcard->refresh_disable_status();
 			}
-			if(pcard->current.location == LOCATION_MZONE) {
+			if(pcard->current.location == LOCATION_MZONE || pcard->current.location == LOCATION_SZONE) {
 				raise_single_event(pcard, 0, EVENT_CHANGE_POS, reason_effect, 0, reason_player, 0, 0);
 				pos_changed.insert(pcard);
 			}
