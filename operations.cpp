@@ -3046,13 +3046,13 @@ int32 field::special_summon_rule(uint16 step, uint8 sumplayer, card* target, uin
 		int32 ct2 = get_spsummonable_count_fromex(pcard, sumplayer, sumplayer, zone, &flag2);
 		for(auto it = pgroup->it; it != pgroup->container.end(); ++it) {
 			if((*it)->current.location != LOCATION_EXTRA)
-				--ct2;
+				--ct1;
 			else
 				--ct2;
 		}
 		if(pcard->current.location != LOCATION_EXTRA) {
-			if(ct2 == 0)
-				zone = flag2;
+			if(ct1 == 0)
+				zone = flag1;
 		} else {
 			if(ct2 == 0)
 				zone = flag2;
@@ -3256,13 +3256,13 @@ int32 field::special_summon_step(uint16 step, group* targets, card* target, uint
 				if(pcard->current.location == LOCATION_MZONE)
 					continue;
 				if(pcard->current.location != LOCATION_EXTRA)
-					--ct2;
+					--ct1;
 				else
 					--ct2;
 			}
 			if(target->current.location != LOCATION_EXTRA) {
-				if(ct2 == 0)
-					zone &= flag2;
+				if(ct1 == 0)
+					zone &= flag1;
 			} else {
 				if(ct2 == 0)
 					zone &= flag2;

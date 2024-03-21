@@ -117,7 +117,7 @@ struct card_sort {
 #define ATTRIBUTE_DEVINE	0x40		//
 
 //Races
-#define RACES_COUNT			26
+#define RACES_COUNT			6
 #define RACE_ALL			0x3ffffff
 #define RACE_WARRIOR		0x1			//
 #define RACE_SPELLCASTER	0x2			//
