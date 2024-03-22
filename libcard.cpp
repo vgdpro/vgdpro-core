@@ -627,8 +627,8 @@ int32 scriptlib::card_get_attack(lua_State *L) {
 	check_param(L, PARAM_TYPE_CARD, 1);
 	card* pcard = *(card**) lua_touserdata(L, 1);
 	int32 atk = pcard->get_attack();
-	if(atk < 0)
-		atk = 0;
+	// if(atk < 0)
+	// 	atk = 0;
 	lua_pushinteger(L, atk);
 	return 1;
 }
@@ -637,8 +637,8 @@ int32 scriptlib::card_get_origin_attack(lua_State *L) {
 	check_param(L, PARAM_TYPE_CARD, 1);
 	card* pcard = *(card**) lua_touserdata(L, 1);
 	int32 atk = pcard->get_base_attack();
-	if(atk < 0)
-		atk = 0;
+	// if(atk < 0)
+	// 	atk = 0;
 	lua_pushinteger(L, atk);
 	return 1;
 }
@@ -657,8 +657,8 @@ int32 scriptlib::card_get_defense(lua_State *L) {
 	check_param(L, PARAM_TYPE_CARD, 1);
 	card* pcard = *(card**) lua_touserdata(L, 1);
 	int32 def = pcard->get_defense();
-	if(def < 0)
-		def = 0;
+	// if(def < 0)
+	// 	def = 0;
 	lua_pushinteger(L, def);
 	return 1;
 }
@@ -667,8 +667,8 @@ int32 scriptlib::card_get_origin_defense(lua_State *L) {
 	check_param(L, PARAM_TYPE_CARD, 1);
 	card* pcard = *(card**) lua_touserdata(L, 1);
 	int32 def = pcard->get_base_defense();
-	if(def < 0)
-		def = 0;
+	// if(def < 0)
+	// 	def = 0;
 	lua_pushinteger(L, def);
 	return 1;
 }

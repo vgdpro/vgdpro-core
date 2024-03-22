@@ -652,13 +652,13 @@ std::pair<int32, int32> card::get_base_atk_def() {
 		return ret;
 	}
 	int32 batk = data.attack;
-	if (batk < 0)
-		batk = 0;
+	// if (batk < 0)
+	// 	batk = 0;
 	int32 bdef = 0;
 	if (!(data.type & TYPE_LINK)) {
 		bdef = data.defense;
-		if (bdef < 0)
-			bdef = 0;
+		// if (bdef < 0)
+		// 	bdef = 0;
 	}
 	temp.base_attack = batk;
 	temp.base_defense = bdef;
@@ -677,15 +677,15 @@ std::pair<int32, int32> card::get_base_atk_def() {
 			switch(eset[i]->code) {
 			case EFFECT_SET_BASE_ATTACK:
 				batk = eset[i]->get_value(this);
-				if(batk < 0)
-					batk = 0;
+				// if(batk < 0)
+				// 	batk = 0;
 				temp.base_attack = batk;
 				eset.remove_item(i);
 				continue;
 			case EFFECT_SET_BASE_DEFENSE:
 				bdef = eset[i]->get_value(this);
-				if(bdef < 0)
-					bdef = 0;
+				// if(bdef < 0)
+				// 	bdef = 0;
 				temp.base_defense = bdef;
 				eset.remove_item(i);
 				continue;
@@ -698,14 +698,14 @@ std::pair<int32, int32> card::get_base_atk_def() {
 		case EFFECT_SET_BASE_ATTACK:
 		case EFFECT_SET_BASE_ATTACK_FINAL:
 			batk = eset[i]->get_value(this);
-			if(batk < 0)
-				batk = 0;
+			// if(batk < 0)
+			// 	batk = 0;
 			break;
 		case EFFECT_SET_BASE_DEFENSE:
 		case EFFECT_SET_BASE_DEFENSE_FINAL:
 			bdef = eset[i]->get_value(this);
-			if(bdef < 0)
-				bdef = 0;
+			// if(bdef < 0)
+			// 	bdef = 0;
 			break;
 		case EFFECT_SWAP_BASE_AD:
 			std::swap(batk, bdef);
@@ -750,13 +750,13 @@ std::pair<int32, int32> card::get_atk_def() {
 	effect_set effects_def_final, effects_def_wicked, effects_def_option;
 	effect_set effects_repeat_update_atk, effects_repeat_update_def;
 	int32 batk = data.attack;
-	if (batk < 0)
-		batk = 0;
+	// if (batk < 0)
+	// 	batk = 0;
 	int32 bdef = 0;
 	if (!(data.type & TYPE_LINK)) {
 		bdef = data.defense;
-		if (bdef < 0)
-			bdef = 0;
+		// if (bdef < 0)
+		// 	bdef = 0;
 	}
 	temp.attack = batk;
 	temp.defense = bdef;
@@ -783,15 +783,15 @@ std::pair<int32, int32> card::get_atk_def() {
 			switch (eset[i]->code) {
 			case EFFECT_SET_ATTACK:
 				atk = eset[i]->get_value(this);
-				if (atk < 0)
-					atk = 0;
+				// if (atk < 0)
+				// 	atk = 0;
 				temp.attack = atk;
 				eset.remove_item(i);
 				continue;
 			case EFFECT_SET_DEFENSE:
 				def = eset[i]->get_value(this);
-				if (def < 0)
-					def = 0;
+				// if (def < 0)
+				// 	def = 0;
 				temp.defense = def;
 				eset.remove_item(i);
 				continue;
@@ -811,15 +811,15 @@ std::pair<int32, int32> card::get_atk_def() {
 			break;
 		case EFFECT_SET_ATTACK:
 			atk = eset[i]->get_value(this);
-			if (atk < 0)
-				atk = 0;
+			// if (atk < 0)
+			// 	atk = 0;
 			up_atk = 0;
 			break;
 		case EFFECT_SET_ATTACK_FINAL:
 			if ((eset[i]->type & EFFECT_TYPE_SINGLE) && !eset[i]->is_flag(EFFECT_FLAG_SINGLE_RANGE)) {
 				atk = eset[i]->get_value(this);
-				if (atk < 0)
-					atk = 0;
+				// if (atk < 0)
+				// 	atk = 0;
 				up_atk = 0;
 				upc_atk = 0;
 			}
@@ -844,15 +844,15 @@ std::pair<int32, int32> card::get_atk_def() {
 			break;
 		case EFFECT_SET_DEFENSE:
 			def = eset[i]->get_value(this);
-			if (def < 0)
-				def = 0;
+			// if (def < 0)
+			// 	def = 0;
 			up_def = 0;
 			break;
 		case EFFECT_SET_DEFENSE_FINAL:
 			if ((eset[i]->type & EFFECT_TYPE_SINGLE) && !eset[i]->is_flag(EFFECT_FLAG_SINGLE_RANGE)) {
 				def = eset[i]->get_value(this);
-				if (def < 0)
-					def = 0;
+				// if (def < 0)
+				// 	def = 0;
 				up_def = 0;
 				upc_def = 0;
 			}
@@ -878,31 +878,31 @@ std::pair<int32, int32> card::get_atk_def() {
 			temp.attack = atk - up_atk - upc_atk;
 			temp.defense = def - up_def - upc_def;
 		}
-		if (temp.attack < 0)
-			temp.attack = 0;
-		if (temp.defense < 0)
-			temp.defense = 0;
+		// if (temp.attack < 0)
+		// 	temp.attack = 0;
+		// if (temp.defense < 0)
+		// 	temp.defense = 0;
 	}
 	for (int32 i = 0; i < effects_repeat_update_atk.size(); ++i) {
 		temp.attack += effects_repeat_update_atk[i]->get_value(this);
-		if (temp.attack < 0)
-			temp.attack = 0;
+		// if (temp.attack < 0)
+		// 	temp.attack = 0;
 	}
 	for (int32 i = 0; i < effects_repeat_update_def.size(); ++i) {
 		temp.defense += effects_repeat_update_def[i]->get_value(this);
-		if (temp.defense < 0)
-			temp.defense = 0;
+		// if (temp.defense < 0)
+		// 	temp.defense = 0;
 	}
 	for (int32 i = 0; i < effects_atk_final.size(); ++i) {
 		atk = effects_atk_final[i]->get_value(this);
-		if (atk < 0)
-			atk = 0;
+		// if (atk < 0)
+		// 	atk = 0;
 		temp.attack = atk;
 	}
 	for (int32 i = 0; i < effects_def_final.size(); ++i){
 		def = effects_def_final[i]->get_value(this);
-		if (def < 0)
-			def = 0;
+		// if (def < 0)
+		// 	def = 0;
 		temp.defense = def;
 	}
 	if (swap_final)
@@ -910,27 +910,27 @@ std::pair<int32, int32> card::get_atk_def() {
 	// The Wicked
 	for (int32 i = 0; i < effects_atk_wicked.size(); ++i) {
 		atk = effects_atk_wicked[i]->get_value(this);
-		if (atk < 0)
-			atk = 0;
+		// if (atk < 0)
+		// 	atk = 0;
 		temp.attack = atk;
 	}
 	for (int32 i = 0; i < effects_def_wicked.size(); ++i) {
 		def = effects_def_wicked[i]->get_value(this);
-		if (def < 0)
-			def = 0;
+		// if (def < 0)
+		// 	def = 0;
 		temp.defense = def;
 	}
 	// Gradius' Option
 	for (int32 i = 0; i < effects_atk_option.size(); ++i) {
 		atk = effects_atk_option[i]->get_value(this);
-		if (atk < 0)
-			atk = 0;
+		// if (atk < 0)
+		// 	atk = 0;
 		temp.attack = atk;
 	}
 	for (int32 i = 0; i < effects_def_option.size(); ++i) {
 		def = effects_def_option[i]->get_value(this);
-		if (def < 0)
-			def = 0;
+		// if (def < 0)
+		// 	def = 0;
 		temp.defense = def;
 	}
 	ret.first = temp.attack;
