@@ -40,6 +40,9 @@ interpreter::interpreter(duel* pd): coroutines(256) {
 	scriptlib::open_debuglib(lua_state);
 	//extra scripts
 	load_script("./script/VgDefinition.lua");
+	load_script("./script/constant.lua");
+	load_script("./script/utility.lua");
+	load_script("./script/procedure.lua");
 	load_script("./script/VgD.lua");
 }
 interpreter::~interpreter() {

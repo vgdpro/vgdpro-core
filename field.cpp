@@ -623,7 +623,7 @@ int32 field::is_location_useable(uint32 playerid, uint32 location, uint32 sequen
 * @return usable count in zone of playerid's MZONE or SZONE(0~4) (can be negative)
 */
 int32 field::get_useable_count(card* pcard, uint8 playerid, uint8 location, uint8 uplayer, uint32 reason, uint32 zone, uint32* list) {
-	if(location == LOCATION_MZONE && pcard )//&& pcard->current.location == LOCATION_EXTRA)
+	if(location == LOCATION_MZONE && pcard && pcard->current.location == LOCATION_EXTRA)
 		return get_useable_count_fromex(pcard, playerid, uplayer, zone, list);
 	else
 		//return get_useable_count_fromex(pcard, playerid, uplayer, zone, list);
@@ -654,7 +654,7 @@ int32 field::get_useable_count_fromex(card* pcard, uint8 playerid, uint8 uplayer
 * for LOCATION_MZONE, "available" means not used, not disabled, satisfying EFFECT_MUST_USE_MZONE
 */
 int32 field::get_spsummonable_count(card* pcard, uint8 playerid, uint32 zone, uint32* list) {
-	if(pcard->current.type == TYPE_MONSTER)
+	if(pcard->current.location == LOCATION_EXTRA)
 		return get_spsummonable_count_fromex(pcard, playerid, playerid, zone, list);
 	else
 		return get_tofield_count(pcard, playerid, LOCATION_MZONE, playerid, LOCATION_REASON_TOFIELD, zone, list);
@@ -825,8 +825,7 @@ uint32 field::get_rule_zone_fromex(int32 playerid, card* pcard) {
 			&& (pcard->is_position(POS_FACEDOWN) || !(pcard->data.type & TYPE_PENDULUM)))
 			return 0x7f;
 		else
-			return 0x7f;
-			//return get_linked_zone(playerid) | (1u << 5) | (1u << 6);
+			return get_linked_zone(playerid) | (1u << 5) | (1u << 6);
 	} else {
 		return 0x1f;
 	}
