@@ -55,6 +55,10 @@ struct card_sort {
 #define LOCATION_GRAVE		0x10		//
 #define LOCATION_REMOVED	0x20		//
 #define LOCATION_EXTRA		0x40		//
+#define LOCATION_EXILE      0x120       //除外区
+#define LOCATION_DAMAGE     0x140       //伤害区
+#define LOCATION_ORDER      0x180       //指令区
+#define LOCATION_SPARE      0x110       //备用格子（用于怪物箱等
 #define LOCATION_OVERLAY	0x80		//
 #define LOCATION_ONFIELD	0x0c		//
 #define LOCATION_FZONE		0x100		//
