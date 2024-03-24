@@ -3852,6 +3852,13 @@ int32 card::is_capable_send_to_grave(uint8 playerid) {
 		return FALSE;
 	return TRUE;
 }
+int32 card::is_capable_send_to_exile(uint8 playerid) {
+	if(is_affected_by_effect(EFFECT_CANNOT_TO_EXILE))
+		return FALSE;
+	if(!pduel->game_field->is_player_can_send_to_exile(playerid, this))
+		return FALSE;
+	return TRUE;
+}
 int32 card::is_capable_send_to_hand(uint8 playerid) {
 	if(is_status(STATUS_LEAVE_CONFIRMED))
 		return FALSE;

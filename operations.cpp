@@ -269,7 +269,7 @@ void field::send_to(card_set* targets, effect* reason_effect, uint32 reason, uin
 		// send to hand from deck and playerid not given => send to the hand of controler
 		if(p == PLAYER_NONE && (destination & LOCATION_HAND) && (pcard->current.location & LOCATION_DECK) && pcard->current.controler == reason_player)
 			p = reason_player;
-		if(destination & (LOCATION_GRAVE | LOCATION_REMOVED) || p == PLAYER_NONE)
+		if(destination & (LOCATION_GRAVE | LOCATION_REMOVED | LOCATION_EXILE) || p == PLAYER_NONE)
 			p = pcard->owner;
 		if(destination == LOCATION_GRAVE && pcard->current.location == LOCATION_REMOVED)
 			pcard->current.reason |= REASON_RETURN;

@@ -219,6 +219,7 @@ public:
 	static int32 card_is_can_be_special_summoned(lua_State *L);
 	static int32 card_is_able_to_hand(lua_State *L);
 	static int32 card_is_able_to_grave(lua_State *L);
+	static int32 card_is_able_to_exile(lua_State *L);
 	static int32 card_is_able_to_deck(lua_State *L);
 	static int32 card_is_able_to_extra(lua_State *L);
 	static int32 card_is_able_to_remove(lua_State *L);
@@ -606,6 +607,7 @@ public:
 	static int32 duel_is_player_can_remove(lua_State *L);
 	static int32 duel_is_player_can_send_to_hand(lua_State *L);
 	static int32 duel_is_player_can_send_to_grave(lua_State *L);
+	static int32 duel_is_player_can_send_to_exile(lua_State *L);
 	static int32 duel_is_player_can_send_to_deck(lua_State *L);
 	static int32 duel_is_player_can_additional_summon(lua_State *L);
 	static int32 duel_is_chain_solving(lua_State *L);

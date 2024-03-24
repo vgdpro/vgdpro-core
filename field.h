@@ -88,6 +88,7 @@ struct player_info {
 	card_vector list_szone;
 	card_vector list_main;
 	card_vector list_grave;
+	card_vector list_exile;
 	card_vector list_hand;
 	card_vector list_remove;
 	card_vector list_extra;
@@ -500,6 +501,7 @@ public:
 	int32 is_player_can_remove_counter(uint8 playerid, card* pcard, uint8 s, uint8 o, uint16 countertype, uint16 count, uint32 reason);
 	int32 is_player_can_remove_overlay_card(uint8 playerid, card* pcard, uint8 s, uint8 o, uint16 count, uint32 reason);
 	int32 is_player_can_send_to_grave(uint8 playerid, card* pcard);
+	int32 is_player_can_send_to_exile(uint8 playerid, card* pcard);
 	int32 is_player_can_send_to_hand(uint8 playerid, card* pcard);
 	int32 is_player_can_send_to_deck(uint8 playerid, card* pcard);
 	int32 is_player_can_remove(uint8 playerid, card* pcard, uint32 reason);
@@ -704,6 +706,7 @@ public:
 #define TIMING_TOHAND				0x200000
 #define TIMING_TODECK				0x400000
 #define TIMING_TOGRAVE				0x800000
+#define TIMING_TOEXILE				0x900000
 #define TIMING_BATTLE_PHASE			0x1000000
 #define TIMING_EQUIP				0x2000000
 #define TIMING_BATTLE_STEP_END		0x4000000

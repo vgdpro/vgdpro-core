@@ -2347,6 +2347,17 @@ int32 scriptlib::card_is_able_to_grave(lua_State *L) {
 		lua_pushboolean(L, 0);
 	return 1;
 }
+int32 scriptlib::card_is_able_to_exile(lua_State *L) {
+	check_param_count(L, 1);
+	check_param(L, PARAM_TYPE_CARD, 1);
+	card* pcard = *(card**) lua_touserdata(L, 1);
+	uint32 p = pcard->pduel->game_field->core.reason_player;
+	if(pcard->is_capable_send_to_exile(p))
+		lua_pushboolean(L, 1);
+	else
+		lua_pushboolean(L, 0);
+	return 1;
+}
 int32 scriptlib::card_is_able_to_deck(lua_State *L) {
 	check_param_count(L, 1);
 	check_param(L, PARAM_TYPE_CARD, 1);
@@ -3564,6 +3575,7 @@ static const struct luaL_Reg cardlib[] = {
 	{ "IsAbleToDeck", scriptlib::card_is_able_to_deck },
 	{ "IsAbleToExtra", scriptlib::card_is_able_to_extra },
 	{ "IsAbleToGrave", scriptlib::card_is_able_to_grave },
+	{ "IsAbleToExile", scriptlib::card_is_able_to_exile },
 	{ "IsAbleToRemove", scriptlib::card_is_able_to_remove },
 	{ "IsAbleToHandAsCost", scriptlib::card_is_able_to_hand_as_cost },
 	{ "IsAbleToDeckAsCost", scriptlib::card_is_able_to_deck_as_cost },

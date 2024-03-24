@@ -70,6 +70,7 @@ field::field(duel* pduel) {
 		player[i].list_main.reserve(60);
 		player[i].list_hand.reserve(60);
 		player[i].list_grave.reserve(75);
+		player[i].list_exile.reserve(75);
 		player[i].list_remove.reserve(75);
 		player[i].list_extra.reserve(30);
 	}
@@ -101,6 +102,7 @@ void field::reload_field_info() {
 		pduel->write_buffer8((uint8)player[playerid].list_main.size());
 		pduel->write_buffer8((uint8)player[playerid].list_hand.size());
 		pduel->write_buffer8((uint8)player[playerid].list_grave.size());
+		pduel->write_buffer8((uint8)player[playerid].list_exile.size());
 		pduel->write_buffer8((uint8)player[playerid].list_remove.size());
 		pduel->write_buffer8((uint8)player[playerid].list_extra.size());
 		pduel->write_buffer8((uint8)player[playerid].extra_p_count);
@@ -174,6 +176,11 @@ void field::add_card(uint8 playerid, card* pcard, uint8 location, uint8 sequence
 		pcard->current.sequence = (uint8)player[playerid].list_grave.size() - 1;
 		break;
 	}
+	case LOCATION_EXILE: {
+		player[playerid].list_exile.push_back(pcard);
+		pcard->current.sequence = (uint8)player[playerid].list_exile.size() - 1;
+		break;
+	}
 	case LOCATION_REMOVED: {
 		player[playerid].list_remove.push_back(pcard);
 		pcard->current.sequence = (uint8)player[playerid].list_remove.size() - 1;
@@ -230,6 +237,10 @@ void field::remove_card(card* pcard) {
 	case LOCATION_GRAVE:
 		player[playerid].list_grave.erase(player[playerid].list_grave.begin() + pcard->current.sequence);
 		reset_sequence(playerid, LOCATION_GRAVE);
+		break;
+	case LOCATION_EXILE:
+		player[playerid].list_exile.erase(player[playerid].list_exile.begin() + pcard->current.sequence);
+		reset_sequence(playerid, LOCATION_EXILE);
 		break;
 	case LOCATION_REMOVED:
 		player[playerid].list_remove.erase(player[playerid].list_remove.begin() + pcard->current.sequence);
@@ -351,6 +362,17 @@ void field::move_card(uint8 playerid, card* pcard, uint8 location, uint8 sequenc
 					player[pcard->current.controler].list_grave.erase(player[pcard->current.controler].list_grave.begin() + pcard->current.sequence);
 					player[pcard->current.controler].list_grave.push_back(pcard);
 					reset_sequence(pcard->current.controler, LOCATION_GRAVE);
+					pduel->write_buffer32(pcard->get_info_location());
+					pduel->write_buffer32(pcard->current.reason);
+				} else if(location == LOCATION_EXILE) {
+					if(pcard->current.sequence == player[pcard->current.controler].list_exile.size() - 1)
+						return;
+					pduel->write_buffer8(MSG_MOVE);
+					pduel->write_buffer32(pcard->data.code);
+					pduel->write_buffer32(pcard->get_info_location());
+					player[pcard->current.controler].list_exile.erase(player[pcard->current.controler].list_exile.begin() + pcard->current.sequence);
+					player[pcard->current.controler].list_exile.push_back(pcard);
+					reset_sequence(pcard->current.controler, LOCATION_EXILE);
 					pduel->write_buffer32(pcard->get_info_location());
 					pduel->write_buffer32(pcard->current.reason);
 				} else if(location == LOCATION_REMOVED) {
@@ -559,6 +581,13 @@ card* field::get_field_card(uint32 playerid, uint32 location, uint32 sequence) {
 	case LOCATION_GRAVE: {
 		if(sequence < player[playerid].list_grave.size())
 			return player[playerid].list_grave[sequence];
+		else
+			return nullptr;
+		break;
+	}
+	case LOCATION_EXILE: {
+		if(sequence < player[playerid].list_exile.size())
+			return player[playerid].list_exile[sequence];
 		else
 			return nullptr;
 		break;
@@ -1030,6 +1059,10 @@ void field::reset_sequence(uint8 playerid, uint8 location) {
 		for(auto& pcard : player[playerid].list_grave)
 			pcard->current.sequence = i++;
 		break;
+	case LOCATION_EXILE:
+		for(auto& pcard : player[playerid].list_exile)
+			pcard->current.sequence = i++;
+		break;
 	case LOCATION_REMOVED:
 		for(auto& pcard : player[playerid].list_remove)
 			pcard->current.sequence = i++;
@@ -1378,6 +1411,8 @@ void field::filter_affected_cards(effect* peffect, card_set* cset) {
 			cvec.push_back(&player[self].list_szone);
 		if(range & LOCATION_GRAVE)
 			cvec.push_back(&player[self].list_grave);
+		if(range & LOCATION_EXILE)
+			cvec.push_back(&player[self].list_exile);
 		if(range & LOCATION_REMOVED)
 			cvec.push_back(&player[self].list_remove);
 		if(range & LOCATION_HAND)
@@ -1411,6 +1446,8 @@ void field::filter_inrange_cards(effect* peffect, card_set* cset) {
 			cvec.push_back(&player[self].list_szone);
 		if(range & LOCATION_GRAVE)
 			cvec.push_back(&player[self].list_grave);
+		if(range & LOCATION_EXILE)
+			cvec.push_back(&player[self].list_exile);
 		if(range & LOCATION_REMOVED)
 			cvec.push_back(&player[self].list_remove);
 		if(range & LOCATION_HAND)
@@ -1593,6 +1630,24 @@ int32 field::filter_matching_card(int32 findex, uint8 self, uint32 location1, ui
 				}
 			}
 		}
+		if(location & LOCATION_EXILE) {
+			for(auto cit = player[self].list_exile.rbegin(); cit != player[self].list_exile.rend(); ++cit) {
+				if(*cit != pexception && !(pexgroup && pexgroup->has_card(*cit))
+				        && pduel->lua->check_matching(*cit, findex, extraargs)
+				        && (!is_target || (*cit)->is_capable_be_effect_target(core.reason_effect, core.reason_player))) {
+					if(pret) {
+						*pret = *cit;
+						return TRUE;
+					}
+					++count;
+					if(fcount && count >= fcount)
+						return TRUE;
+					if(pgroup) {
+						pgroup->container.insert(*cit);
+					}
+				}
+			}
+		}
 		if(location & LOCATION_REMOVED) {
 			for(auto cit = player[self].list_remove.rbegin(); cit != player[self].list_remove.rend(); ++cit) {
 				if(*cit != pexception && !(pexgroup && pexgroup->has_card(*cit))
@@ -1678,6 +1733,11 @@ int32 field::filter_field_card(uint8 self, uint32 location1, uint32 location2, g
 			if(pgroup)
 				pgroup->container.insert(player[self].list_grave.rbegin(), player[self].list_grave.rend());
 			count += (uint32)player[self].list_grave.size();
+		}
+		if(location & LOCATION_EXILE) {
+			if(pgroup)
+				pgroup->container.insert(player[self].list_exile.rbegin(), player[self].list_exile.rend());
+			count += (uint32)player[self].list_exile.size();
 		}
 		if(location & LOCATION_REMOVED) {
 			if(pgroup)
@@ -3328,6 +3388,20 @@ int32 field::is_player_can_remove_overlay_card(uint8 playerid, card * pcard, uin
 int32 field::is_player_can_send_to_grave(uint8 playerid, card * pcard) {
 	effect_set eset;
 	filter_player_effect(playerid, EFFECT_CANNOT_TO_GRAVE, &eset);
+	for(int32 i = 0; i < eset.size(); ++i) {
+		if(!eset[i]->target)
+			return FALSE;
+		pduel->lua->add_param(eset[i], PARAM_TYPE_EFFECT);
+		pduel->lua->add_param(pcard, PARAM_TYPE_CARD);
+		pduel->lua->add_param(playerid, PARAM_TYPE_INT);
+		if (pduel->lua->check_condition(eset[i]->target, 3))
+			return FALSE;
+	}
+	return TRUE;
+}
+int32 field::is_player_can_send_to_exile(uint8 playerid, card * pcard) {
+	effect_set eset;
+	filter_player_effect(playerid, EFFECT_CANNOT_TO_EXILE, &eset);
 	for(int32 i = 0; i < eset.size(); ++i) {
 		if(!eset[i]->target)
 			return FALSE;

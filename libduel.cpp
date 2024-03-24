@@ -95,9 +95,9 @@ int32 scriptlib::duel_exile(lua_State *L) {
 		luaL_error(L, "Parameter %d should be \"Card\" or \"Group\".", 1);
 	uint32 reason = lua_tointeger(L, 2);
 	if(pcard)
-		pduel->game_field->send_to(pcard, pduel->game_field->core.reason_effect, reason, pduel->game_field->core.reason_player, PLAYER_NONE, 0, 0, POS_FACEUP);
+		pduel->game_field->send_to(pcard, pduel->game_field->core.reason_effect, reason, pduel->game_field->core.reason_player, PLAYER_NONE, LOCATION_EXILE, 0, POS_FACEUP);
 	else
-		pduel->game_field->send_to(&(pgroup->container), pduel->game_field->core.reason_effect, reason, pduel->game_field->core.reason_player, PLAYER_NONE, 0, 0, POS_FACEUP);
+		pduel->game_field->send_to(&(pgroup->container), pduel->game_field->core.reason_effect, reason, pduel->game_field->core.reason_player, PLAYER_NONE, LOCATION_EXILE, 0, POS_FACEUP);
 	return lua_yieldk(L, 0, (lua_KContext)pduel, [](lua_State *L, int32 status, lua_KContext ctx) {
 		duel* pduel = (duel*)ctx;
 		lua_pushinteger(L, pduel->game_field->returns.ivalue[0]);
@@ -4491,6 +4491,24 @@ int32 scriptlib::duel_is_player_can_send_to_grave(lua_State * L) {
 	}
 	return 1;
 }
+int32 scriptlib::duel_is_player_can_send_to_exile(lua_State * L) {
+	check_param_count(L, 1);
+	int32 playerid = (int32)lua_tointeger(L, 1);
+	if(playerid != 0 && playerid != 1) {
+		lua_pushboolean(L, 0);
+		return 1;
+	}
+	duel* pduel = interpreter::get_duel_info(L);
+	if(lua_gettop(L) == 1)
+		lua_pushboolean(L, pduel->game_field->is_player_can_action(playerid, EFFECT_CANNOT_TO_GRAVE));
+	else {
+		check_param_count(L, 2);
+		check_param(L, PARAM_TYPE_CARD, 2);
+		card* pcard = *(card**) lua_touserdata(L, 2);
+		lua_pushboolean(L, pduel->game_field->is_player_can_send_to_exile(playerid, pcard));
+	}
+	return 1;
+}
 int32 scriptlib::duel_is_player_can_send_to_deck(lua_State * L) {
 	check_param_count(L, 1);
 	int32 playerid = (int32)lua_tointeger(L, 1);
@@ -5003,6 +5021,7 @@ static const struct luaL_Reg duellib[] = {
 	{ "IsPlayerCanRemove", scriptlib::duel_is_player_can_remove },
 	{ "IsPlayerCanSendtoHand", scriptlib::duel_is_player_can_send_to_hand },
 	{ "IsPlayerCanSendtoGrave", scriptlib::duel_is_player_can_send_to_grave },
+	{ "IsPlayerCanSendtoExile", scriptlib::duel_is_player_can_send_to_exile },
 	{ "IsPlayerCanSendtoDeck", scriptlib::duel_is_player_can_send_to_deck },
 	{ "IsPlayerCanAdditionalSummon", scriptlib::duel_is_player_can_additional_summon },
 	{ "IsChainSolving", scriptlib::duel_is_chain_solving },
