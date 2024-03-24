@@ -4133,6 +4133,8 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 		uint8 control_player = pcard->overlay_target ? pcard->overlay_target->current.controler : pcard->current.controler;
 		if(dest == LOCATION_GRAVE) {
 			core.hint_timing[control_player] |= TIMING_TOGRAVE;
+		} else if(dest == LOCATION_EXILE) {
+			core.hint_timing[control_player] |= TIMING_TOEXILE;
 		} else if(dest == LOCATION_HAND) {
 			pcard->set_status(STATUS_PROC_COMPLETE, FALSE);
 			core.hint_timing[control_player] |= TIMING_TOHAND;
