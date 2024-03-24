@@ -3051,11 +3051,11 @@ int32 field::special_summon_rule(uint16 step, uint8 sumplayer, card* target, uin
 				--ct2;
 		}
 		if(pcard->current.location != LOCATION_EXTRA) {
-			if(ct1 == 0)
-				zone = flag1;
-		} else {
 			if(ct2 == 0)
 				zone = flag2;
+		} else {
+			if(ct1 == 0)
+				zone = flag1;
 		}
 		uint8 positions = pcard->get_spsummonable_position(peffect, ((peffect->get_value(pcard) & 0xff00ffff) | SUMMON_TYPE_SPECIAL), POS_FACEUP, sumplayer, sumplayer);
 		move_to_field(pcard, sumplayer, sumplayer, LOCATION_MZONE, positions, FALSE, 0, FALSE, zone);
@@ -3261,11 +3261,11 @@ int32 field::special_summon_step(uint16 step, group* targets, card* target, uint
 					--ct2;
 			}
 			if(target->current.location != LOCATION_EXTRA) {
-				if(ct1 == 0)
-					zone &= flag1;
-			} else {
 				if(ct2 == 0)
 					zone &= flag2;
+			} else {
+				if(ct1 == 0)
+					zone &= flag1;
 			}
 		}
 		uint8 sumpositions = target->get_spsummonable_position(core.reason_effect, target->summon_info & DEFAULT_SUMMON_TYPE, positions, target->summon_player, playerid);
