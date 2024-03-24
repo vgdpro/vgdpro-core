@@ -1,4 +1,4 @@
-# YGOPro script engine. 测试修改
+# YGOPro script engine.
 
 ## Introduction
 The core logic and lua script processor of YGOPro. This library can be made external of the project and used to power server technologies. It maintains a state engine that is manipulated by Lua scripts using manipulation functions it exposes.
