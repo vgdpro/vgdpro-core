@@ -280,7 +280,7 @@ inline effect_flag operator|(effect_flag flag1, effect_flag flag2)
 #define EFFECT_CANNOT_TO_DECK			66	//
 #define EFFECT_CANNOT_REMOVE			67	//
 #define EFFECT_CANNOT_TO_GRAVE			68	//
-#define EFFECT_CANNOT_TO_EXILE          688
+#define EFFECT_CANNOT_TO_EXILE          372
 #define EFFECT_CANNOT_TURN_SET			69	//
 #define EFFECT_CANNOT_BE_BATTLE_TARGET	70	//
 #define EFFECT_CANNOT_BE_EFFECT_TARGET	71	//
