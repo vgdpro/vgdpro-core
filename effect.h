@@ -150,6 +150,7 @@ public:
 #define RESET_CONTROL		0x02000000
 #define RESET_OVERLAY		0x04000000
 #define RESET_MSCHANGE		0x08000000
+#define RESET_TOEXILE		0x20000000
 
 //========== Types ==========
 #define EFFECT_TYPE_SINGLE			0x0001	//
@@ -479,6 +480,7 @@ inline effect_flag operator|(effect_flag flag1, effect_flag flag2)
 #define EVENT_FREE_CHAIN	1002
 #define EVENT_DESTROY		1010
 #define EVENT_REMOVE		1011
+#define EVENT_EXILE		    1811
 #define EVENT_TO_HAND		1012
 #define EVENT_TO_DECK		1013
 #define EVENT_TO_GRAVE		1014

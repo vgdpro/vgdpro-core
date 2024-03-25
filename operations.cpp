@@ -3908,6 +3908,7 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 			         || (dest == LOCATION_DECK && !pcard->is_capable_send_to_deck(core.reason_player, send_activating))
 			         || (dest == LOCATION_REMOVED && !pcard->is_removeable(core.reason_player, pcard->sendto_param.position, reason))
 			         || (dest == LOCATION_GRAVE && !pcard->is_capable_send_to_grave(core.reason_player))
+					 || (dest == LOCATION_EXILE && !pcard->is_capable_send_to_exile(core.reason_player))
 			         //|| (dest == LOCATION_EXTRA && !pcard->is_capable_send_to_extra(core.reason_player))
 					 )) {
 				pcard->current.reason = pcard->temp.reason;
@@ -4270,6 +4271,8 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 				pcard->reset(RESET_TODECK, RESET_EVENT);
 			if(nloc == LOCATION_GRAVE)
 				pcard->reset(RESET_TOGRAVE, RESET_EVENT);
+			if(nloc == LOCATION_EXILE)
+				pcard->reset(RESET_TOEXILE, RESET_EVENT);
 			if(nloc == LOCATION_REMOVED || ((pcard->data.type & TYPE_TOKEN) && pcard->sendto_param.location == LOCATION_REMOVED)) {
 				if(pcard->current.reason & REASON_TEMPORARY)
 					pcard->reset(RESET_TEMP_REMOVE, RESET_EVENT);
@@ -4308,7 +4311,7 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 		core.units.begin()->ptarget = param->targets;
 		targets = param->targets;
 		delete param;
-		card_set tohand, todeck, tograve, remove, discard, released, destroyed;
+		card_set tohand, todeck, tograve, exile, remove, discard, released, destroyed;
 		card_set equipings, overlays;
 		for(auto& pcard : targets->container) {
 			uint8 nloc = pcard->current.location;
@@ -4350,6 +4353,10 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 				remove.insert(pcard);
 				raise_single_event(pcard, 0, EVENT_REMOVE, pcard->current.reason_effect, pcard->current.reason, pcard->current.reason_player, 0, 0);
 			}
+			if(nloc == LOCATION_EXILE) {
+				exile.insert(pcard);
+				raise_single_event(pcard, 0, EVENT_EXILE, pcard->current.reason_effect, pcard->current.reason, pcard->current.reason_player, 0, 0);
+			}
 			if(pcard->current.reason & REASON_DISCARD) {
 				discard.insert(pcard);
 				raise_single_event(pcard, 0, EVENT_DISCARD, pcard->current.reason_effect, pcard->current.reason, pcard->current.reason_player, 0, 0);
@@ -4375,6 +4382,8 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 			raise_event(&todeck, EVENT_TO_DECK, reason_effect, reason, reason_player, 0, 0);
 		if(tograve.size())
 			raise_event(&tograve, EVENT_TO_GRAVE, reason_effect, reason, reason_player, 0, 0);
+		if(exile.size())
+			raise_event(&exile, EVENT_EXILE, reason_effect, reason, reason_player, 0, 0);
 		if(remove.size())
 			raise_event(&remove, EVENT_REMOVE, reason_effect, reason, reason_player, 0, 0);
 		if(discard.size())
@@ -4440,7 +4449,7 @@ int32 field::discard_deck(uint16 step, uint8 playerid, uint8 count, uint32 reaso
 		return FALSE;
 	}
 	case 1: {
-		card_set tohand, todeck, tograve, remove;
+		card_set tohand, todeck, tograve, exile, remove;
 		core.discarded_set.clear();
 		for (int32 i = 0; i < count; ++i) {
 			if(player[playerid].list_main.size() == 0)
@@ -4454,6 +4463,9 @@ int32 field::discard_deck(uint16 step, uint8 playerid, uint8 count, uint32 reaso
 				pcard->set_status(STATUS_PROC_COMPLETE, FALSE);
 			} else if(dest == LOCATION_DECK) {
 				pcard->reset(RESET_TODECK, RESET_EVENT);
+				pcard->set_status(STATUS_PROC_COMPLETE, FALSE);
+			} else if(dest == LOCATION_EXILE) {
+				pcard->reset(RESET_TOEXILE, RESET_EVENT);
 				pcard->set_status(STATUS_PROC_COMPLETE, FALSE);
 			} else if(dest == LOCATION_REMOVED) {
 				if(pcard->current.reason & REASON_TEMPORARY)
@@ -4507,6 +4519,9 @@ int32 field::discard_deck(uint16 step, uint8 playerid, uint8 count, uint32 reaso
 			} else if(dest == LOCATION_REMOVED) {
 				remove.insert(pcard);
 				raise_single_event(pcard, 0, EVENT_REMOVE, pcard->current.reason_effect, pcard->current.reason, pcard->current.reason_player, 0, 0);
+			} else if(dest == LOCATION_EXILE) {
+				exile.insert(pcard);
+				raise_single_event(pcard, 0, EVENT_EXILE, pcard->current.reason_effect, pcard->current.reason, pcard->current.reason_player, 0, 0);
 			}
 			raise_single_event(pcard, 0, EVENT_MOVE, pcard->current.reason_effect, pcard->current.reason, pcard->current.reason_player, 0, 0);
 			core.discarded_set.insert(pcard);
@@ -4519,6 +4534,8 @@ int32 field::discard_deck(uint16 step, uint8 playerid, uint8 count, uint32 reaso
 			raise_event(&tograve, EVENT_TO_GRAVE, core.reason_effect, reason, core.reason_player, 0, 0);
 		if(remove.size())
 			raise_event(&remove, EVENT_REMOVE, core.reason_effect, reason, core.reason_player, 0, 0);
+		if(exile.size())
+			raise_event(&exile, EVENT_EXILE, core.reason_effect, reason, core.reason_player, 0, 0);
 		raise_event(&core.discarded_set, EVENT_MOVE, core.reason_effect, reason, core.reason_player, 0, 0);
 		process_single_event();
 		process_instant_event();
