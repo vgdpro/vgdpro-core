@@ -59,6 +59,7 @@ struct card_sort {
 #define LOCATION_DAMAGE     0x80       // 伤害区
 #define LOCATION_ORDER      0x90       // 指令区
 #define LOCATION_SPARE      0xA0       // 备用格子
+#define LOCATION_GZONE      0xa0       //GZONE
 #define LOCATION_OVERLAY	0x80		//
 #define LOCATION_ONFIELD	0x0c		//
 #define LOCATION_FZONE		0x100		//
