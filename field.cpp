@@ -714,12 +714,21 @@ int32 field::get_spsummonable_count_fromex(card* pcard, uint8 playerid, uint8 up
 int32 field::get_useable_count_other(card* pcard, uint8 playerid, uint8 location, uint8 uplayer, uint32 reason, uint32 zone, uint32* list) {
 	int32 count = get_tofield_count(pcard, playerid, location, uplayer, reason, zone, list);
 	int32 limit;
-	if(location == LOCATION_MZONE)
+	if(location == LOCATION_MZONE){
 		limit = get_mzone_limit(playerid, uplayer, reason);
+		if(count > limit)
+			count = limit;
+	}
 	else
+	{
 		limit = get_szone_limit(playerid, uplayer, reason);
-	if(count > limit)
-		count = limit;
+		if(limit == 5){
+			count =1;
+		}
+		else{
+			count =0;
+		}
+	}
 	return count;
 }
 /**

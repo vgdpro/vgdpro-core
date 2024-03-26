@@ -3729,6 +3729,7 @@ int32 field::process_turn(uint16 step, uint8 turn_player) {
 		infos.turn_player = turn_player;
 		pduel->write_buffer8(MSG_NEW_TURN);
 		pduel->write_buffer8(turn_player);
+		raise_event((card*)0, EVENT_PREDRAW, 0, 0, 0, turn_player, 0);
 		if((core.duel_options & DUEL_TAG_MODE) && infos.turn_id != 1)
 			tag_swap(turn_player);
 		if(is_player_affected_by_effect(infos.turn_player, EFFECT_SKIP_TURN)) {
@@ -3760,7 +3761,6 @@ int32 field::process_turn(uint16 step, uint8 turn_player) {
 		}
 		pduel->write_buffer8(MSG_NEW_PHASE);
 		pduel->write_buffer16(infos.phase);
-		raise_event((card*)0, EVENT_PREDRAW, 0, 0, 0, turn_player, 0);
 		process_instant_event();
 		pduel->write_buffer8(MSG_HINT);
 		pduel->write_buffer8(HINT_EVENT);
