@@ -55,13 +55,13 @@ struct card_sort {
 #define LOCATION_GRAVE		0x10		//
 #define LOCATION_REMOVED	0x20		//
 #define LOCATION_EXTRA		0x40		//
-#define LOCATION_EXILE      0x60       //除外区
+#define LOCATION_EXILE      0x60        // 除外区
 #define LOCATION_DAMAGE     0x80       // 伤害区
 #define LOCATION_ORDER      0x90       // 指令区
-#define LOCATION_SPARE      0xA0       // 备用格子
-#define LOCATION_GZONE      0xa0       //GZONE
-#define LOCATION_OVERLAY	0x80		//
-#define LOCATION_ONFIELD	0x0c		//
+#define LOCATION_SPARE      0x81       // 备用格子
+#define LOCATION_GZONE      0x82       // GZONE
+#define LOCATION_OVERLAY    0x03       //
+#define LOCATION_ONFIELD    0x0c       //
 #define LOCATION_FZONE		0x100		//
 #define LOCATION_PZONE		0x200		//
 //For redirect
