@@ -126,7 +126,7 @@ public:
 		uint32 findcard(card* pcard);
 	};
 	struct sendto_param_t {
-		void set(uint8 p, uint8 pos, uint8 loc, uint8 seq = 0) {
+		void set(uint8 p, uint8 pos, uint16 loc, uint8 seq = 0) {
 			playerid = p;
 			position = pos;
 			location = loc;
@@ -140,7 +140,7 @@ public:
 		}
 		uint8 playerid{ 0 };
 		uint8 position{ 0 };
-		uint8 location{ 0 };
+		uint16 location{ 0 };
 		uint8 sequence{ 0 };
 	};
 	static const std::unordered_map<uint32, uint32> second_code;
