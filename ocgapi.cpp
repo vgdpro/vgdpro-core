@@ -77,9 +77,9 @@ extern "C" DECL_DLLEXPORT void start_duel(intptr_t pduel, int32 options) {
 	pd->game_field->core.shuffle_hand_check[1] = FALSE;
 	pd->game_field->core.shuffle_deck_check[0] = FALSE;
 	pd->game_field->core.shuffle_deck_check[1] = FALSE;
-	pd->game_field->process_instant_event();
 	pd->game_field->raise_event((card*)0, EVENT_PREDRAW, 0, 0, 0, 1, 0);
 	pd->game_field->raise_event((card*)0, EVENT_PREDRAW, 0, 0, 0, 0, 0);
+	pd->game_field->process_instant_event();
 	if(pd->game_field->player[0].start_count > 0)
 		pd->game_field->draw(0, REASON_RULE, PLAYER_NONE, 0, pd->game_field->player[0].start_count);
 	if(pd->game_field->player[1].start_count > 0)
