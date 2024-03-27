@@ -40,7 +40,7 @@ struct card_state {
 	int32 base_attack{ 0 };
 	int32 base_defense{ 0 };
 	uint8 controler{ PLAYER_NONE };
-	uint8 location{ 0 };
+	uint16 location{ 0 };
 	uint8 sequence{ 0 };
 	uint8 position{ 0 };
 	uint32 reason{ 0 };
