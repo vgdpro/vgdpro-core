@@ -413,7 +413,7 @@ int32 field::draw(uint16 step, effect* reason_effect, uint32 reason, uint8 reaso
 				for(auto& pcard : *drawed_set) {
 					pduel->write_buffer32(pcard->data.code);
 					pduel->write_buffer8(pcard->current.controler);
-					pduel->write_buffer8(pcard->current.location);
+					pduel->write_buffer16(pcard->current.location);
 					pduel->write_buffer8(pcard->current.sequence);
 				}
 				shuffle(playerid, LOCATION_HAND);
@@ -3900,7 +3900,7 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 	case 0: {
 		for(auto cit = targets->container.begin(); cit != targets->container.end();) {
 			card* pcard = *cit;
-			uint8 dest = pcard->sendto_param.location;
+			uint16 dest = pcard->sendto_param.location;
 			if(!(reason & REASON_RULE) &&
 			        (pcard->get_status(STATUS_SUMMONING | STATUS_SPSUMMON_STEP)
 			         || (!(pcard->current.reason & (REASON_COST | REASON_SUMMON | REASONS_PROCEDURE)) && !pcard->is_affect_by_effect(pcard->current.reason_effect))
@@ -4127,9 +4127,9 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 			return FALSE;
 		exargs* param = (exargs*)targets;
 		card* pcard = *param->cvit;
-		uint8 oloc = pcard->current.location;
+		uint16 oloc = pcard->current.location;
 		uint8 playerid = pcard->sendto_param.playerid & 0x7;
-		uint8 dest = pcard->sendto_param.location;
+		uint16 dest = pcard->sendto_param.location;
 		uint8 seq = pcard->sendto_param.sequence;
 		uint8 control_player = pcard->overlay_target ? pcard->overlay_target->current.controler : pcard->current.controler;
 		if(dest == LOCATION_GRAVE) {
@@ -4266,7 +4266,7 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 		for(auto& pcard : param->targets->container) {
 			if(!(pcard->data.type & TYPE_TOKEN))
 				pcard->enable_field_effect(true);
-			uint8 nloc = pcard->current.location;
+			uint16 nloc = pcard->current.location;
 			if(nloc == LOCATION_HAND)
 				pcard->reset(RESET_TOHAND, RESET_EVENT);
 			if(nloc == LOCATION_DECK || nloc == LOCATION_EXTRA)
@@ -4316,7 +4316,7 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 		card_set tohand, todeck, tograve, exile, remove, discard, released, destroyed;
 		card_set equipings, overlays;
 		for(auto& pcard : targets->container) {
-			uint8 nloc = pcard->current.location;
+			uint16 nloc = pcard->current.location;
 			uint8 cb_redirected = pcard->sendto_param.playerid >> 5;
 			if(pcard->equiping_target && !cb_redirected)
 				pcard->unequip();

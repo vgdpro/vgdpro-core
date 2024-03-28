@@ -138,7 +138,7 @@ extern "C" DECL_DLLEXPORT uint32 process(intptr_t pduel) {
 	} while ((result & PROCESSOR_BUFFER_LEN) == 0 && (result & PROCESSOR_FLAG) == 0);
 	return result;
 }
-extern "C" DECL_DLLEXPORT void new_card(intptr_t pduel, uint32 code, uint8 owner, uint8 playerid, uint8 location, uint8 sequence, uint8 position) {
+extern "C" DECL_DLLEXPORT void new_card(intptr_t pduel, uint32 code, uint8 owner, uint8 playerid, uint16 location, uint8 sequence, uint8 position) {
 	duel* ptduel = (duel*)pduel;
 	if(ptduel->game_field->is_location_useable(playerid, location, sequence)) {
 		card* pcard = ptduel->new_card(code);
@@ -154,7 +154,7 @@ extern "C" DECL_DLLEXPORT void new_card(intptr_t pduel, uint32 code, uint8 owner
 		}
 	}
 }
-extern "C" DECL_DLLEXPORT void new_tag_card(intptr_t pduel, uint32 code, uint8 owner, uint8 location) {
+extern "C" DECL_DLLEXPORT void new_tag_card(intptr_t pduel, uint32 code, uint8 owner, uint16 location) {
 	duel* ptduel = (duel*)pduel;
 	if(owner > 1 || !(location & (LOCATION_DECK | LOCATION_EXTRA)))
 		return;
@@ -178,7 +178,7 @@ extern "C" DECL_DLLEXPORT void new_tag_card(intptr_t pduel, uint32 code, uint8 o
 		break;
 	}
 }
-extern "C" DECL_DLLEXPORT int32 query_card(intptr_t pduel, uint8 playerid, uint8 location, uint8 sequence, int32 query_flag, byte* buf, int32 use_cache) {
+extern "C" DECL_DLLEXPORT int32 query_card(intptr_t pduel, uint8 playerid, uint16 location, uint8 sequence, int32 query_flag, byte* buf, int32 use_cache) {
 	if(playerid != 0 && playerid != 1)
 		return LEN_FAIL;
 	duel* ptduel = (duel*)pduel;
@@ -215,7 +215,7 @@ extern "C" DECL_DLLEXPORT int32 query_card(intptr_t pduel, uint8 playerid, uint8
 		return LEN_EMPTY;
 	}
 }
-extern "C" DECL_DLLEXPORT int32 query_field_count(intptr_t pduel, uint8 playerid, uint8 location) {
+extern "C" DECL_DLLEXPORT int32 query_field_count(intptr_t pduel, uint8 playerid, uint16 location) {
 	duel* ptduel = (duel*)pduel;
 	if(playerid != 0 && playerid != 1)
 		return 0;
@@ -248,7 +248,7 @@ extern "C" DECL_DLLEXPORT int32 query_field_count(intptr_t pduel, uint8 playerid
 	}
 	return 0;
 }
-extern "C" DECL_DLLEXPORT int32 query_field_card(intptr_t pduel, uint8 playerid, uint8 location, uint32 query_flag, byte* buf, int32 use_cache) {
+extern "C" DECL_DLLEXPORT int32 query_field_card(intptr_t pduel, uint8 playerid, uint16 location, uint32 query_flag, byte* buf, int32 use_cache) {
 	if(playerid != 0 && playerid != 1)
 		return LEN_FAIL;
 	duel* ptduel = (duel*)pduel;

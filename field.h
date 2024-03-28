@@ -384,9 +384,9 @@ public:
 	~field() = default;
 	void reload_field_info();
 
-	void add_card(uint8 playerid, card* pcard, uint8 location, uint8 sequence, uint8 pzone = FALSE);
+	void add_card(uint8 playerid, card* pcard, uint16 location, uint8 sequence, uint8 pzone = FALSE);
 	void remove_card(card* pcard);
-	void move_card(uint8 playerid, card* pcard, uint8 location, uint8 sequence, uint8 pzone = FALSE);
+	void move_card(uint8 playerid, card* pcard, uint16 location, uint8 sequence, uint8 pzone = FALSE);
 	void swap_card(card* pcard1, card* pcard2, uint8 new_sequence1, uint8 new_sequence2);
 	void swap_card(card* pcard1, card* pcard2);
 	void set_control(card* pcard, uint8 playerid, uint16 reset_phase, uint8 reset_count);
@@ -410,7 +410,7 @@ public:
 	int32 check_extra_link(int32 playerid, card* pcard, int32 sequence);
 	void get_cards_in_zone(card_set* cset, uint32 zone, int32 playerid, int32 location);
 	void shuffle(uint8 playerid, uint8 location);
-	void reset_sequence(uint8 playerid, uint8 location);
+	void reset_sequence(uint8 playerid, uint16 location);
 	void swap_deck_and_grave(uint8 playerid);
 	void reverse_deck(uint8 playerid);
 	void tag_swap(uint8 playerid);

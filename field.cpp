@@ -118,7 +118,7 @@ void field::reload_field_info() {
 		pduel->write_buffer32(peffect->description);
 	}
 }
-void field::add_card(uint8 playerid, card* pcard, uint8 location, uint8 sequence, uint8 pzone) {
+void field::add_card(uint8 playerid, card* pcard, uint16 location, uint8 sequence, uint8 pzone) {
 	if (pcard->current.location != 0)
 		return;
 	if (!is_location_useable(playerid, location, sequence))
@@ -267,7 +267,7 @@ void field::remove_card(card* pcard) {
 	pcard->current.location = 0;
 	pcard->current.sequence = 0;
 }
-void field::move_card(uint8 playerid, card* pcard, uint8 location, uint8 sequence, uint8 pzone) {
+void field::move_card(uint8 playerid, card* pcard, uint16 location, uint8 sequence, uint8 pzone) {
 	if (!is_location_useable(playerid, location, sequence))
 		return;
 	uint8 preplayer = pcard->current.controler;
@@ -1048,7 +1048,7 @@ void field::shuffle(uint8 playerid, uint8 location) {
 		}
 	}
 }
-void field::reset_sequence(uint8 playerid, uint8 location) {
+void field::reset_sequence(uint8 playerid, uint16 location) {
 	if(location & (LOCATION_ONFIELD))
 		return;
 	uint32 i = 0;
