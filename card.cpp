@@ -1990,7 +1990,7 @@ void card::remove_effect(effect* peffect, effect_container::iterator it) {
 			pduel->write_buffer8(MSG_REMOVE_COUNTER);
 			pduel->write_buffer16(cmit->first);
 			pduel->write_buffer8(current.controler);
-			pduel->write_buffer8(current.location);
+			pduel->write_buffer16(current.location);
 			pduel->write_buffer8(current.sequence);
 			pduel->write_buffer16(cmit->second[0] + cmit->second[1]);
 			counters.erase(cmit);
@@ -2146,7 +2146,7 @@ void card::reset(uint32 id, uint32 reset_type) {
 					pduel->write_buffer8(MSG_REMOVE_COUNTER);
 					pduel->write_buffer16(cmit->first);
 					pduel->write_buffer8(current.controler);
-					pduel->write_buffer8(current.location);
+					pduel->write_buffer16(current.location);
 					pduel->write_buffer8(current.sequence);
 					pduel->write_buffer16(cmit->second[1]);
 					cmit->second[1] = 0;
@@ -2397,7 +2397,7 @@ int32 card::remove_counter(uint16 countertype, uint16 count) {
 	pduel->write_buffer8(MSG_REMOVE_COUNTER);
 	pduel->write_buffer16(countertype);
 	pduel->write_buffer8(current.controler);
-	pduel->write_buffer8(current.location);
+	pduel->write_buffer16(current.location);
 	pduel->write_buffer8(current.sequence);
 	pduel->write_buffer16(count);
 	return TRUE;
