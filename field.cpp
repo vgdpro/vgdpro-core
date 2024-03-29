@@ -476,9 +476,9 @@ void field::swap_card(card* pcard1, card* pcard2, uint8 new_sequence1, uint8 new
 	if(s1 == new_sequence1 && s2 == new_sequence2) {
 		pduel->write_buffer8(MSG_SWAP);
 		pduel->write_buffer32(pcard1->data.code);
-		pduel->write_buffer32(info1);
+		pduel->write_buffer40(info1);
 		pduel->write_buffer32(pcard2->data.code);
-		pduel->write_buffer32(info2);
+		pduel->write_buffer40(info2);
 	} else if(s1 == new_sequence1) {
 		pduel->write_buffer8(MSG_MOVE);
 		pduel->write_buffer32(pcard1->data.code);
@@ -1023,7 +1023,7 @@ void field::shuffle(uint8 playerid, uint16 location) {
 					effect* peffect = i.first;
 					if(peffect->is_flag(EFFECT_FLAG_CLIENT_HINT) && !peffect->is_flag(EFFECT_FLAG_PLAYER_TARGET)) {
 						pduel->write_buffer8(MSG_CARD_HINT);
-						pduel->write_buffer32(pcard->get_info_location());
+						pduel->write_buffer40(pcard->new_get_info_location());
 						pduel->write_buffer8(CHINT_DESC_ADD);
 						pduel->write_buffer32(peffect->description);
 					}

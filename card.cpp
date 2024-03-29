@@ -1533,8 +1533,8 @@ void card::equip(card* target, uint32 send_msg) {
 	}
 	if(send_msg) {
 		pduel->write_buffer8(MSG_EQUIP);
-		pduel->write_buffer32(get_info_location());
-		pduel->write_buffer32(target->get_info_location());
+		pduel->write_buffer40(new_get_info_location());
+		pduel->write_buffer40(target->new_get_info_location());
 	}
 	return;
 }
@@ -1910,7 +1910,7 @@ int32 card::add_effect(effect* peffect) {
 		pduel->game_field->effects.rechargeable.insert(peffect);
 	if(peffect->is_flag(EFFECT_FLAG_CLIENT_HINT)) {
 		pduel->write_buffer8(MSG_CARD_HINT);
-		pduel->write_buffer32(get_info_location());
+		pduel->write_buffer40(new_get_info_location());
 		pduel->write_buffer8(CHINT_DESC_ADD);
 		pduel->write_buffer32(peffect->description);
 	}
@@ -1998,7 +1998,7 @@ void card::remove_effect(effect* peffect, effect_container::iterator it) {
 	}
 	if(peffect->is_flag(EFFECT_FLAG_CLIENT_HINT)) {
 		pduel->write_buffer8(MSG_CARD_HINT);
-		pduel->write_buffer32(get_info_location());
+		pduel->write_buffer40(new_get_info_location());
 		pduel->write_buffer8(CHINT_DESC_REMOVE);
 		pduel->write_buffer32(peffect->description);
 	}
@@ -2225,7 +2225,7 @@ std::tuple<uint8, effect*> card::refresh_control_status() {
 void card::count_turn(uint16 ct) {
 	turn_counter = ct;
 	pduel->write_buffer8(MSG_CARD_HINT);
-	pduel->write_buffer32(get_info_location());
+	pduel->write_buffer40(new_get_info_location());
 	pduel->write_buffer8(CHINT_TURN);
 	pduel->write_buffer32(ct);
 }
@@ -2486,8 +2486,8 @@ void card::add_card_target(card* pcard) {
 			pduel->game_field->add_to_disable_check_list(pcard);
 	}
 	pduel->write_buffer8(MSG_CARD_TARGET);
-	pduel->write_buffer32(get_info_location());
-	pduel->write_buffer32(pcard->get_info_location());
+	pduel->write_buffer40(new_get_info_location());
+	pduel->write_buffer40(pcard->new_get_info_location());
 }
 void card::cancel_card_target(card* pcard) {
 	auto cit = effect_target_cards.find(pcard);
@@ -2499,8 +2499,8 @@ void card::cancel_card_target(card* pcard) {
 				pduel->game_field->add_to_disable_check_list(pcard);
 		}
 		pduel->write_buffer8(MSG_CANCEL_TARGET);
-		pduel->write_buffer32(get_info_location());
-		pduel->write_buffer32(pcard->get_info_location());
+		pduel->write_buffer40(new_get_info_location());
+		pduel->write_buffer40(pcard->new_get_info_location());
 	}
 }
 void card::clear_card_target() {

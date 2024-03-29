@@ -1625,11 +1625,11 @@ int32 scriptlib::duel_shuffle_setcard(lua_State *L) {
 		std::swap(ms[i], ms[s]);
 	}
 	pduel->write_buffer8(MSG_SHUFFLE_SET_CARD);
-	pduel->write_buffer8(loc);
+	pduel->write_buffer16(loc);
 	pduel->write_buffer8(ct);
 	for(uint32 i = 0; i < ct; ++i) {
 		card* pcard = ms[i];
-		pduel->write_buffer32(pcard->get_info_location());
+		pduel->write_buffer40(pcard->new_get_info_location());
 		if(loc == LOCATION_MZONE)
 			pduel->game_field->player[tp].list_mzone[seq[i]] = pcard;
 		else
@@ -1642,9 +1642,9 @@ int32 scriptlib::duel_shuffle_setcard(lua_State *L) {
 	pduel->game_field->process_instant_event();
 	for(uint32 i = 0; i < ct; ++i) {
 		if(ms[i]->xyz_materials.size())
-			pduel->write_buffer32(ms[i]->get_info_location());
+			pduel->write_buffer40(ms[i]->new_get_info_location());
 		else
-			pduel->write_buffer32(0);
+			pduel->write_buffer40(0);
 	}
 	return 0;
 }
@@ -1704,16 +1704,16 @@ int32 scriptlib::duel_change_attack_target(lua_State *L) {
 				pduel->game_field->core.opp_mzone.insert(pcard->fieldid_r);
 		}
 		pduel->write_buffer8(MSG_ATTACK);
-		pduel->write_buffer32(attacker->get_info_location());
+		pduel->write_buffer40(attacker->new_get_info_location());
 		if(target) {
 			pduel->game_field->raise_single_event(target, 0, EVENT_BE_BATTLE_TARGET, 0, REASON_REPLACE, 0, 1 - turnp, 0);
 			pduel->game_field->raise_event(target, EVENT_BE_BATTLE_TARGET, 0, REASON_REPLACE, 0, 1 - turnp, 0);
 			pduel->game_field->process_single_event();
 			pduel->game_field->process_instant_event();
-			pduel->write_buffer32(target->get_info_location());
+			pduel->write_buffer40(target->new_get_info_location());
 		} else {
 			pduel->game_field->core.attack_player = TRUE;
-			pduel->write_buffer32(0);
+			pduel->write_buffer40(0);
 		}
 		lua_pushboolean(L, 1);
 	} else

@@ -369,7 +369,7 @@ int32 scriptlib::group_random_select(lua_State *L) {
 	pduel->write_buffer8(playerid);
 	pduel->write_buffer8(count);
 	for(auto& pcard : newgroup->container) {
-		pduel->write_buffer32(pcard->get_info_location());
+		pduel->write_buffer40(pcard->new_get_info_location());
 	}
 	interpreter::group2value(L, newgroup);
 	return 1;
