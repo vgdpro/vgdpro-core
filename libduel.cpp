@@ -1038,7 +1038,7 @@ int32 scriptlib::duel_confirm_decktop(lua_State *L) {
 	for(uint32 i = 0; i < count && cit != pduel->game_field->player[playerid].list_main.rend(); ++i, ++cit) {
 		pduel->write_buffer32((*cit)->data.code);
 		pduel->write_buffer8((*cit)->current.controler);
-		pduel->write_buffer8((*cit)->current.location);
+		pduel->write_buffer16((*cit)->current.location);
 		pduel->write_buffer8((*cit)->current.sequence);
 	}
 	pduel->game_field->add_process(PROCESSOR_WAIT, 0, 0, 0, 0, 0);
