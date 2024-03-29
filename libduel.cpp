@@ -3089,7 +3089,7 @@ int32 scriptlib::duel_select_target(lua_State *L) {
 				if(peffect->is_flag(EFFECT_FLAG_CARD_TARGET)) {
 					pduel->write_buffer8(MSG_BECOME_TARGET);
 					pduel->write_buffer8(1);
-					pduel->write_buffer32(pcard->get_info_location());
+					pduel->write_buffer40(pcard->new_get_info_location());
 				}
 			}
 			interpreter::group2value(L, pgroup);
@@ -3429,12 +3429,12 @@ int32 scriptlib::duel_set_target_card(lua_State *L) {
 			if(pcard) {
 				pduel->write_buffer8(MSG_BECOME_TARGET);
 				pduel->write_buffer8(1);
-				pduel->write_buffer32(pcard->get_info_location());
+				pduel->write_buffer40(pcard->new_get_info_location());
 			} else {
 				for(auto& pcard : pgroup->container) {
 					pduel->write_buffer8(MSG_BECOME_TARGET);
 					pduel->write_buffer8(1);
-					pduel->write_buffer32(pcard->get_info_location());
+					pduel->write_buffer40(pcard->new_get_info_location());
 				}
 			}
 		}
@@ -3718,7 +3718,7 @@ int32 scriptlib::duel_hint_selection(lua_State *L) {
 	for(auto& pcard : pgroup->container) {
 		pduel->write_buffer8(MSG_BECOME_TARGET);
 		pduel->write_buffer8(1);
-		pduel->write_buffer32(pcard->get_info_location());
+		pduel->write_buffer40(pcard->new_get_info_location());
 	}
 	return 0;
 }

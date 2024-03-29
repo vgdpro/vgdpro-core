@@ -87,7 +87,7 @@ void field::change_target(uint8 chaincount, group* targets) {
 			for(auto& pcard : ot->container) {
 				pduel->write_buffer8(MSG_BECOME_TARGET);
 				pduel->write_buffer8(1);
-				pduel->write_buffer32(pcard->get_info_location());
+				pduel->write_buffer40(pcard->new_get_info_location());
 			}
 		}
 	}

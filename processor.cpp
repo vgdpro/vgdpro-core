@@ -2601,7 +2601,7 @@ int32 field::process_battle_command(uint16 step) {
 			else {
 				pduel->write_buffer8(MSG_BECOME_TARGET);
 				pduel->write_buffer8(1);
-				pduel->write_buffer32(core.attacker->get_info_location());
+				pduel->write_buffer40(core.attacker->new_get_info_location());
 				pduel->write_buffer8(MSG_HINT);
 				pduel->write_buffer8(HINT_SELECTMSG);
 				pduel->write_buffer8(1 - infos.turn_player);
