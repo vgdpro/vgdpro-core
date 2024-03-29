@@ -4092,11 +4092,11 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 			pduel->write_buffer8(MSG_MOVE);
 			pduel->write_buffer32(pcard->data.code);
 			pduel->write_buffer8(pcard->current.controler);
-			pduel->write_buffer8(pcard->current.location);
+			pduel->write_buffer16(pcard->current.location);
 			pduel->write_buffer8(pcard->current.sequence);
 			pduel->write_buffer8(pcard->current.position);
 			pduel->write_buffer8(0);
-			pduel->write_buffer8(0);
+			pduel->write_buffer16(0);
 			pduel->write_buffer8(0);
 			pduel->write_buffer8(0);
 			pduel->write_buffer32(pcard->current.reason);
@@ -4150,14 +4150,14 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 		if(pcard->current.controler != playerid || pcard->current.location != dest) {
 			pduel->write_buffer8(MSG_MOVE);
 			pduel->write_buffer32(pcard->data.code);
-			pduel->write_buffer32(pcard->get_info_location());
+			pduel->write_buffer64(pcard->new_get_info_location());
 			if(pcard->overlay_target) {
 				param->detach.insert(pcard->overlay_target);
 				pcard->overlay_target->xyz_remove(pcard);
 			}
 			move_card(playerid, pcard, dest, seq);
 			pcard->current.position = pcard->sendto_param.position;
-			pduel->write_buffer32(pcard->get_info_location());
+			pduel->write_buffer64(pcard->new_get_info_location());
 			pduel->write_buffer32(pcard->current.reason);
 		}
 		if((core.deck_reversed && pcard->current.location == LOCATION_DECK) || (pcard->current.position == POS_FACEUP_DEFENSE))
@@ -4203,14 +4203,14 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 		uint8 seq = returns.bvalue[2];
 		pduel->write_buffer8(MSG_MOVE);
 		pduel->write_buffer32(pcard->data.code);
-		pduel->write_buffer32(pcard->get_info_location());
+		pduel->write_buffer64(pcard->new_get_info_location());
 		if(pcard->overlay_target) {
 			param->detach.insert(pcard->overlay_target);
 			pcard->overlay_target->xyz_remove(pcard);
 		}
 		move_card(pcard->current.controler, pcard, LOCATION_SZONE, seq);
 		pcard->current.position = POS_FACEUP;
-		pduel->write_buffer32(pcard->get_info_location());
+		pduel->write_buffer64(pcard->new_get_info_location());
 		pduel->write_buffer32(pcard->current.reason);
 		pcard->set_status(STATUS_LEAVE_CONFIRMED, FALSE);
 		pcard->set_status(STATUS_FLIP_SUMMONING, FALSE);
@@ -4478,7 +4478,7 @@ int32 field::discard_deck(uint16 step, uint8 playerid, uint8 count, uint32 reaso
 			pduel->write_buffer8(MSG_MOVE);
 			pduel->write_buffer32(pcard->data.code);
 			pduel->write_buffer8(pcard->current.controler);
-			pduel->write_buffer8(pcard->current.location);
+			pduel->write_buffer16(pcard->current.location);
 			pduel->write_buffer8(pcard->current.sequence);
 			pduel->write_buffer8(pcard->current.position);
 			pcard->enable_field_effect(false);
@@ -4495,7 +4495,7 @@ int32 field::discard_deck(uint16 step, uint8 playerid, uint8 count, uint32 reaso
 			pcard->enable_field_effect(true);
 			pcard->current.position = POS_FACEUP;
 			pduel->write_buffer8(pcard->current.controler);
-			pduel->write_buffer8(pcard->current.location);
+			pduel->write_buffer16(pcard->current.location);
 			pduel->write_buffer8(pcard->current.sequence);
 			pduel->write_buffer8(pcard->current.position);
 			pduel->write_buffer32(pcard->current.reason);
@@ -4707,13 +4707,13 @@ int32 field::move_to_field(uint16 step, card* target, uint32 enable, uint32 ret,
 		}
 		pduel->write_buffer8(MSG_MOVE);
 		pduel->write_buffer32(target->data.code);
-		pduel->write_buffer32(target->get_info_location());
+		pduel->write_buffer64(target->new_get_info_location());
 		if(target->overlay_target)
 			target->overlay_target->xyz_remove(target);
 		move_card(playerid, target, location, target->temp.sequence, pzone);
 		target->current.position = returns.ivalue[0];
 		target->set_status(STATUS_LEAVE_CONFIRMED, FALSE);
-		pduel->write_buffer32(target->get_info_location());
+		pduel->write_buffer64(target->new_get_info_location());
 		pduel->write_buffer32(target->current.reason);
 		if((target->current.location != LOCATION_MZONE)) {
 			if(target->equiping_cards.size()) {

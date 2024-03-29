@@ -419,6 +419,21 @@ uint32 card::get_info_location() {
 		return c + (l << 8) + (s << 16) + (ss << 24);
 	}
 }
+uint64 card::new_get_info_location() {
+	if(overlay_target) {
+		uint64 c = overlay_target->current.controler;
+		uint64 l = overlay_target->current.location | LOCATION_OVERLAY;
+		uint64 s = overlay_target->current.sequence;
+		uint64 ss = current.sequence;
+		return c + (l << 8) + (s << 24) + (ss << 32);
+	} else {
+		uint64 c = current.controler;
+		uint64 l = current.location;
+		uint64 s = current.sequence;
+		uint64 ss = current.position;
+		return c + (l << 8) + (s << 24) + (ss << 32);
+	}
+}
 // get the printed code on card
 uint32 card::get_original_code() const {
 	if (data.is_alternative())
@@ -1612,7 +1627,7 @@ void card::xyz_overlay(card_set* materials) {
 		pcard->clear_card_target();
 		pduel->write_buffer8(MSG_MOVE);
 		pduel->write_buffer32(pcard->data.code);
-		pduel->write_buffer32(pcard->get_info_location());
+		pduel->write_buffer64(pcard->new_get_info_location());
 		if(pcard->overlay_target) {
 			pcard->overlay_target->xyz_remove(pcard);
 		} else {
@@ -1628,7 +1643,7 @@ void card::xyz_overlay(card_set* materials) {
 			leave_deck.insert(pcard);
 			pduel->game_field->raise_single_event(pcard, 0, EVENT_LEAVE_DECK, pduel->game_field->core.reason_effect, pcard->current.reason, pduel->game_field->core.reason_player, 0, 0);
 		}
-		pduel->write_buffer32(pcard->get_info_location());
+		pduel->write_buffer64(pcard->new_get_info_location());
 		pduel->write_buffer32(pcard->current.reason);
 	}
 	if(leave_grave.size() || leave_deck.size()) {
