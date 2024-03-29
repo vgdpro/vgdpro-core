@@ -53,11 +53,11 @@ These functions create the game itself and then manipulate it.
 - `void get_log_message(ptr pduel, byte* buf);`
 - `int32 get_message(ptr pduel, byte* buf);`
 - `int32 process(ptr pduel);` : do a game tick
-- `void new_card(ptr pduel, uint32 code, uint8 owner, uint8 playerid, uint8 location, uint8 sequence, uint8 position);` : add a card to the duel state.
-- `void new_tag_card(ptr pduel, uint32 code, uint8 owner, uint8 location);` : add a new card to the tag pool.
-- `int32 query_card(ptr pduel, uint8 playerid, uint8 location, uint8 sequence, int32 query_flag, byte* buf, int32 use_cache);` : find out about a card in a specific spot.
-- `int32 query_field_count(ptr pduel, uint8 playerid, uint8 location);` : Get the number of cards in a specific field/zone.
-- `int32 query_field_card(ptr pduel, uint8 playerid, uint8 location, int32 query_flag, byte* buf, int32 use_cache);`
+- `void new_card(ptr pduel, uint32 code, uint8 owner, uint8 playerid, uint16 location, uint8 sequence, uint8 position);` : add a card to the duel state.
+- `void new_tag_card(ptr pduel, uint32 code, uint8 owner, uint16 location);` : add a new card to the tag pool.
+- `int32 query_card(ptr pduel, uint8 playerid, uint16 location, uint8 sequence, int32 query_flag, byte* buf, int32 use_cache);` : find out about a card in a specific spot.
+- `int32 query_field_count(ptr pduel, uint8 playerid, uint16 location);` : Get the number of cards in a specific field/zone.
+- `int32 query_field_card(ptr pduel, uint8 playerid, uint16 location, int32 query_flag, byte* buf, int32 use_cache);`
 - `int32 query_field_info(ptr pduel, byte* buf);`
 - `void set_responsei(ptr pduel, int32 value);`
 - `void set_responseb(ptr pduel, byte* buf);`

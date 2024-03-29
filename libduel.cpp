@@ -952,7 +952,7 @@ int32 scriptlib::duel_swap_sequence(lua_State *L) {
 	card* pcard1 = *(card**) lua_touserdata(L, 1);
 	card* pcard2 = *(card**) lua_touserdata(L, 2);
 	uint8 player = pcard1->current.controler;
-	uint8 location = pcard1->current.location;
+	uint16 location = pcard1->current.location;
 	duel* pduel = pcard1->pduel;
 	if(pcard2->current.controler == player
 		&& location == LOCATION_MZONE && pcard2->current.location == location
@@ -1608,7 +1608,7 @@ int32 scriptlib::duel_shuffle_setcard(lua_State *L) {
 	card* ms[5];
 	uint8 seq[5];
 	uint8 tp = 2;
-	uint8 loc = 0;
+	uint16 loc = 0;
 	uint8 ct = 0;
 	for(auto& pcard : pgroup->container) {
 		if((loc != 0 && (pcard->current.location != loc)) || (pcard->current.location != LOCATION_MZONE && pcard->current.location != LOCATION_SZONE)

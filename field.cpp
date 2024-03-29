@@ -651,7 +651,7 @@ int32 field::is_location_useable(uint32 playerid, uint32 location, uint32 sequen
 *
 * @return usable count in zone of playerid's MZONE or SZONE(0~4) (can be negative)
 */
-int32 field::get_useable_count(card* pcard, uint8 playerid, uint8 location, uint8 uplayer, uint32 reason, uint32 zone, uint32* list) {
+int32 field::get_useable_count(card* pcard, uint8 playerid, uint16 location, uint8 uplayer, uint32 reason, uint32 zone, uint32* list) {
 	if(location == LOCATION_MZONE && pcard )//&& pcard->current.location == LOCATION_EXTRA)
 		return get_useable_count_fromex(pcard, playerid, uplayer, zone, list);
 	else
@@ -711,7 +711,7 @@ int32 field::get_spsummonable_count_fromex(card* pcard, uint8 playerid, uint8 up
 /**
 * @return usable count in zone of Main MZONE or SZONE(0~4)
 */
-int32 field::get_useable_count_other(card* pcard, uint8 playerid, uint8 location, uint8 uplayer, uint32 reason, uint32 zone, uint32* list) {
+int32 field::get_useable_count_other(card* pcard, uint8 playerid, uint16 location, uint8 uplayer, uint32 reason, uint32 zone, uint32* list) {
 	int32 count = get_tofield_count(pcard, playerid, location, uplayer, reason, zone, list);
 	int32 limit;
 	if(location == LOCATION_MZONE){
@@ -736,7 +736,7 @@ int32 field::get_useable_count_other(card* pcard, uint8 playerid, uint8 location
 * for LOCATION_MZONE, "available" means not used, not disabled, satisfying EFFECT_MUST_USE_MZONE
 * for LOCATION_SZONE, "available" means not used, not disabled
 */
-int32 field::get_tofield_count(card* pcard, uint8 playerid, uint8 location, uint32 uplayer, uint32 reason, uint32 zone, uint32* list) {
+int32 field::get_tofield_count(card* pcard, uint8 playerid, uint16 location, uint32 uplayer, uint32 reason, uint32 zone, uint32* list) {
 	if (location != LOCATION_MZONE && location != LOCATION_SZONE)
 		return 0;
 	uint32 flag = player[playerid].disabled_location | player[playerid].used_location;
@@ -982,7 +982,7 @@ void field::get_cards_in_zone(card_set* cset, uint32 zone, int32 playerid, int32
 		icheck <<= 1;
 	}
 }
-void field::shuffle(uint8 playerid, uint8 location) {
+void field::shuffle(uint8 playerid, uint16 location) {
 	if(!(location & (LOCATION_HAND | LOCATION_DECK | LOCATION_EXTRA)))
 		return;
 	card_vector& svector = (location == LOCATION_HAND) ? player[playerid].list_hand : (location == LOCATION_DECK) ? player[playerid].list_main : player[playerid].list_extra;
@@ -2257,7 +2257,7 @@ void field::remove_unique_card(card* pcard) {
 		core.unique_cards[1 - con].erase(pcard);
 }
 // return: pcard->unique_effect or 0
-effect* field::check_unique_onfield(card* pcard, uint8 controler, uint8 location, card* icard) {
+effect* field::check_unique_onfield(card* pcard, uint8 controler, uint16 location, card* icard) {
 	for(auto& ucard : core.unique_cards[controler]) {
 		if((ucard != pcard) && (ucard != icard) && ucard->is_position(POS_FACEUP) && ucard->get_status(STATUS_EFFECT_ENABLED)
 			&& !ucard->get_status(STATUS_DISABLED | STATUS_FORBIDDEN)
