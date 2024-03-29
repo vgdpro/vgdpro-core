@@ -2373,7 +2373,7 @@ int32 card::add_counter(uint8 playerid, uint16 countertype, uint16 count, uint8 
 	pduel->write_buffer8(MSG_ADD_COUNTER);
 	pduel->write_buffer16(cttype);
 	pduel->write_buffer8(current.controler);
-	pduel->write_buffer8(current.location);
+	pduel->write_buffer16(current.location);
 	pduel->write_buffer8(current.sequence);
 	pduel->write_buffer16(pcount);
 	pduel->game_field->raise_single_event(this, 0, EVENT_ADD_COUNTER + countertype, pduel->game_field->core.reason_effect, REASON_EFFECT, playerid, playerid, pcount);
