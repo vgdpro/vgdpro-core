@@ -1627,7 +1627,7 @@ void card::xyz_overlay(card_set* materials) {
 		pcard->clear_card_target();
 		pduel->write_buffer8(MSG_MOVE);
 		pduel->write_buffer32(pcard->data.code);
-		pduel->write_buffer64(pcard->new_get_info_location());
+		pduel->write_buffer40(pcard->new_get_info_location());
 		if(pcard->overlay_target) {
 			pcard->overlay_target->xyz_remove(pcard);
 		} else {
@@ -1643,7 +1643,7 @@ void card::xyz_overlay(card_set* materials) {
 			leave_deck.insert(pcard);
 			pduel->game_field->raise_single_event(pcard, 0, EVENT_LEAVE_DECK, pduel->game_field->core.reason_effect, pcard->current.reason, pduel->game_field->core.reason_player, 0, 0);
 		}
-		pduel->write_buffer64(pcard->new_get_info_location());
+		pduel->write_buffer40(pcard->new_get_info_location());
 		pduel->write_buffer32(pcard->current.reason);
 	}
 	if(leave_grave.size() || leave_deck.size()) {

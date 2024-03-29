@@ -124,8 +124,12 @@ void duel::restore_assumes() {
 void duel::write_buffer(const void* data, int size) {
 	write_buffer_vector(message_buffer, data, size);
 }
-void duel::write_buffer64(uint64 value) {
-	write_buffer(&value, sizeof(value));
+void duel::write_buffer40(uint64 value) {
+    uint8 lowByte = static_cast<uint8>(value & 0xFF);
+    uint32 highBytes = static_cast<uint32>((value >> 8) & 0xFFFFFFFF);
+    
+    write_buffer8(lowByte);
+    write_buffer32(highBytes);
 }
 void duel::write_buffer32(uint32 value) {
 	write_buffer(&value, sizeof(value));

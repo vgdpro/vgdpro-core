@@ -689,8 +689,8 @@ uint32 field::process() {
 					card* pcard = *clit;
 					pduel->write_buffer8(MSG_MOVE);
 					pduel->write_buffer32(0);
-					pduel->write_buffer64(pcard->new_get_info_location());
-					pduel->write_buffer64(pcard->new_get_info_location());
+					pduel->write_buffer40(pcard->new_get_info_location());
+					pduel->write_buffer40(pcard->new_get_info_location());
 					pduel->write_buffer32(REASON_EFFECT);
 				}
 			}
