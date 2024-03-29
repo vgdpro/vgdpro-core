@@ -338,10 +338,11 @@ extern "C" DECL_DLLEXPORT int32 query_field_info(intptr_t pduel, byte* buf) {
 		effect* peffect = ch.triggering_effect;
 		*((int*)p) = peffect->get_handler()->data.code;
 		p += 4;
-		*((int*)p) = peffect->get_handler()->get_info_location();
-		p += 4;
+		auto infoLocation = peffect->get_handler()->new_get_info_location();
+		std::memcpy(p, &infoLocation, 5);
+		p += 5;
 		*p++ = ch.triggering_controler;
-		*p++ = (uint8)ch.triggering_location;
+		*p++ = (uint16)ch.triggering_location;
 		*p++ = ch.triggering_sequence;
 		*((int*)p) = peffect->description;
 		p += 4;
