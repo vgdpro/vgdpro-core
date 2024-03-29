@@ -2633,7 +2633,7 @@ int32 field::sset_g(uint16 step, uint8 setplayer, uint8 toplayer, group* ptarget
 			for(auto& pcard : core.set_group_set) {
 				pduel->write_buffer32(pcard->data.code);
 				pduel->write_buffer8(pcard->current.controler);
-				pduel->write_buffer8(pcard->current.location);
+				pduel->write_buffer16(pcard->current.location);
 				pduel->write_buffer8(pcard->current.sequence);
 			}
 		}

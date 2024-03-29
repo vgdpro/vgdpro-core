@@ -1090,14 +1090,14 @@ int32 scriptlib::duel_confirm_cards(lua_State *L) {
 		pduel->write_buffer8(1);
 		pduel->write_buffer32(pcard->data.code);
 		pduel->write_buffer8(pcard->current.controler);
-		pduel->write_buffer8(pcard->current.location);
+		pduel->write_buffer16(pcard->current.location);
 		pduel->write_buffer8(pcard->current.sequence);
 	} else {
 		pduel->write_buffer8((uint8)pgroup->container.size());
 		for(auto& pcard : pgroup->container) {
 			pduel->write_buffer32(pcard->data.code);
 			pduel->write_buffer8(pcard->current.controler);
-			pduel->write_buffer8(pcard->current.location);
+			pduel->write_buffer16(pcard->current.location);
 			pduel->write_buffer8(pcard->current.sequence);
 		}
 	}
