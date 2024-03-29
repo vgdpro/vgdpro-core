@@ -392,12 +392,12 @@ public:
 	void set_control(card* pcard, uint8 playerid, uint16 reset_phase, uint8 reset_count);
 	card* get_field_card(uint32 playerid, uint32 location, uint32 sequence);
 	int32 is_location_useable(uint32 playerid, uint32 location, uint32 sequence);
-	int32 get_useable_count(card* pcard, uint8 playerid, uint8 location, uint8 uplayer, uint32 reason, uint32 zone = 0xff, uint32* list = nullptr);
+	int32 get_useable_count(card* pcard, uint8 playerid, uint16 location, uint8 uplayer, uint32 reason, uint32 zone = 0xff, uint32* list = nullptr);
 	int32 get_useable_count_fromex(card* pcard, uint8 playerid, uint8 uplayer, uint32 zone = 0xff, uint32* list = nullptr);
 	int32 get_spsummonable_count(card* pcard, uint8 playerid, uint32 zone = 0xff, uint32* list = nullptr);
 	int32 get_spsummonable_count_fromex(card* pcard, uint8 playerid, uint8 uplayer, uint32 zone = 0xff, uint32* list = nullptr);
-	int32 get_useable_count_other(card* pcard, uint8 playerid, uint8 location, uint8 uplayer, uint32 reason, uint32 zone = 0xff, uint32* list = nullptr);
-	int32 get_tofield_count(card* pcard, uint8 playerid, uint8 location, uint32 uplayer, uint32 reason, uint32 zone = 0xff, uint32* list = nullptr);
+	int32 get_useable_count_other(card* pcard, uint8 playerid, uint16 location, uint8 uplayer, uint32 reason, uint32 zone = 0xff, uint32* list = nullptr);
+	int32 get_tofield_count(card* pcard, uint8 playerid, uint16 location, uint32 uplayer, uint32 reason, uint32 zone = 0xff, uint32* list = nullptr);
 	int32 get_useable_count_fromex_rule4(card* pcard, uint8 playerid, uint8 uplayer, uint32 zone = 0xff, uint32* list = nullptr);
 	int32 get_spsummonable_count_fromex_rule4(card* pcard, uint8 playerid, uint8 uplayer, uint32 zone = 0xff, uint32* list = nullptr);
 	int32 get_mzone_limit(uint8 playerid, uint8 uplayer, uint32 reason);
@@ -409,7 +409,7 @@ public:
 	int32 check_extra_link(int32 playerid);
 	int32 check_extra_link(int32 playerid, card* pcard, int32 sequence);
 	void get_cards_in_zone(card_set* cset, uint32 zone, int32 playerid, int32 location);
-	void shuffle(uint8 playerid, uint8 location);
+	void shuffle(uint8 playerid, uint16 location);
 	void reset_sequence(uint8 playerid, uint16 location);
 	void swap_deck_and_grave(uint8 playerid);
 	void reverse_deck(uint8 playerid);
@@ -452,7 +452,7 @@ public:
 	int32 adjust_grant_effect();
 	void add_unique_card(card* pcard);
 	void remove_unique_card(card* pcard);
-	effect* check_unique_onfield(card* pcard, uint8 controler, uint8 location, card* icard = nullptr);
+	effect* check_unique_onfield(card* pcard, uint8 controler, uint16 location, card* icard = nullptr);
 	int32 check_spsummon_once(card* pcard, uint8 playerid);
 	void check_card_counter(card* pcard, int32 counter_type, int32 playerid);
 	void check_card_counter(group* pgroup, int32 counter_type, int32 playerid);

@@ -1235,8 +1235,8 @@ uint32 card::get_grave_race(uint8 playerid) {
 	return race;
 }
 uint32 card::get_lscale() {
-	if(!current.is_location(LOCATION_PZONE))
-		return data.lscale;
+	/*if (!current.is_location(LOCATION_PZONE))
+		return data.lscale;*/
 	if (temp.lscale != 0xffffffff)
 		return temp.lscale;
 	effect_set effects;
@@ -1258,7 +1258,7 @@ uint32 card::get_lscale() {
 		temp.lscale = lscale;
 	}
 	lscale += up + upc;
-	if(lscale < 0 && current.pzone)
+	if(lscale < 0/* && current.pzone*/)
 		lscale = 0;
 	temp.lscale = 0xffffffff;
 	return lscale;
