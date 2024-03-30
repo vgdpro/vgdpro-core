@@ -194,6 +194,14 @@ extern "C" DECL_DLLEXPORT int32 query_card(intptr_t pduel, uint8 playerid, uint1
 			lst = &ptduel->game_field->player[playerid].list_grave;
 		else if (location == LOCATION_EXILE)
 			lst = &ptduel->game_field->player[playerid].list_exile;
+		else if (location == LOCATION_ORDER)
+			lst = &ptduel->game_field->player[playerid].list_order;
+		else if (location == LOCATION_DAMAGE)
+			lst = &ptduel->game_field->player[playerid].list_damage;
+		else if (location == LOCATION_SPARE)
+			lst = &ptduel->game_field->player[playerid].list_spare;
+		else if (location == LOCATION_GZONE)
+			lst = &ptduel->game_field->player[playerid].list_gzone;
 		else if (location == LOCATION_REMOVED)
 			lst = &ptduel->game_field->player[playerid].list_remove;
 		else if (location == LOCATION_EXTRA)
@@ -226,6 +234,14 @@ extern "C" DECL_DLLEXPORT int32 query_field_count(intptr_t pduel, uint8 playerid
 		return (int32)player.list_grave.size();
 	if(location == LOCATION_EXILE)
 		return (int32)player.list_exile.size();
+	if(location == LOCATION_ORDER)
+		return (int32)player.list_order.size();
+	if(location == LOCATION_DAMAGE)
+		return (int32)player.list_damage.size();
+	if(location == LOCATION_SPARE)
+		return (int32)player.list_spare.size();
+	if(location == LOCATION_GZONE)
+		return (int32)player.list_gzone.size();
 	if(location == LOCATION_REMOVED)
 		return (int32)player.list_remove.size();
 	if(location == LOCATION_EXTRA)
@@ -284,6 +300,14 @@ extern "C" DECL_DLLEXPORT int32 query_field_card(intptr_t pduel, uint8 playerid,
 			lst = &player.list_grave;
 		else if(location == LOCATION_EXILE)
 			lst = &player.list_exile;
+		else if(location == LOCATION_ORDER)
+			lst = &player.list_order;
+		else if(location == LOCATION_DAMAGE)
+			lst = &player.list_damage;
+		else if(location == LOCATION_SPARE)
+			lst = &player.list_spare;
+		else if(location == LOCATION_GZONE)
+			lst = &player.list_gzone;
 		else if(location == LOCATION_REMOVED)
 			lst = &player.list_remove;
 		else if(location == LOCATION_EXTRA)
@@ -329,6 +353,10 @@ extern "C" DECL_DLLEXPORT int32 query_field_info(intptr_t pduel, byte* buf) {
 		*p++ = (uint8)player.list_hand.size();
 		*p++ = (uint8)player.list_grave.size();
 		*p++ = (uint8)player.list_exile.size();
+		*p++ = (uint8)player.list_order.size();
+		*p++ = (uint8)player.list_damage.size();
+		*p++ = (uint8)player.list_spare.size();
+		*p++ = (uint8)player.list_gzone.size();
 		*p++ = (uint8)player.list_remove.size();
 		*p++ = (uint8)player.list_extra.size();
 		*p++ = (uint8)player.extra_p_count;

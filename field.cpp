@@ -71,6 +71,10 @@ field::field(duel* pduel) {
 		player[i].list_hand.reserve(60);
 		player[i].list_grave.reserve(75);
 		player[i].list_exile.reserve(75);
+		player[i].list_order.reserve(75);
+		player[i].list_damage.reserve(75);
+		player[i].list_spare.reserve(75);
+		player[i].list_gzone.reserve(75);
 		player[i].list_remove.reserve(75);
 		player[i].list_extra.reserve(30);
 	}
@@ -103,6 +107,10 @@ void field::reload_field_info() {
 		pduel->write_buffer8((uint8)player[playerid].list_hand.size());
 		pduel->write_buffer8((uint8)player[playerid].list_grave.size());
 		pduel->write_buffer8((uint8)player[playerid].list_exile.size());
+		pduel->write_buffer8((uint8)player[playerid].list_order.size());
+		pduel->write_buffer8((uint8)player[playerid].list_damage.size());
+		pduel->write_buffer8((uint8)player[playerid].list_spare.size());
+		pduel->write_buffer8((uint8)player[playerid].list_gzone.size());
 		pduel->write_buffer8((uint8)player[playerid].list_remove.size());
 		pduel->write_buffer8((uint8)player[playerid].list_extra.size());
 		pduel->write_buffer8((uint8)player[playerid].extra_p_count);
@@ -181,6 +189,26 @@ void field::add_card(uint8 playerid, card* pcard, uint16 location, uint8 sequenc
 		pcard->current.sequence = (uint8)player[playerid].list_exile.size() - 1;
 		break;
 	}
+	case LOCATION_ORDER: {
+		player[playerid].list_order.push_back(pcard);
+		pcard->current.sequence = (uint8)player[playerid].list_order.size() - 1;
+		break;
+	}
+	case LOCATION_DAMAGE: {
+		player[playerid].list_damage.push_back(pcard);
+		pcard->current.sequence = (uint8)player[playerid].list_damage.size() - 1;
+		break;
+	}
+	case LOCATION_SPARE: {
+		player[playerid].list_spare.push_back(pcard);
+		pcard->current.sequence = (uint8)player[playerid].list_spare.size() - 1;
+		break;
+	}
+	case LOCATION_GZONE: {
+		player[playerid].list_gzone.push_back(pcard);
+		pcard->current.sequence = (uint8)player[playerid].list_gzone.size() - 1;
+		break;
+	}
 	case LOCATION_REMOVED: {
 		player[playerid].list_remove.push_back(pcard);
 		pcard->current.sequence = (uint8)player[playerid].list_remove.size() - 1;
@@ -241,6 +269,22 @@ void field::remove_card(card* pcard) {
 	case LOCATION_EXILE:
 		player[playerid].list_exile.erase(player[playerid].list_exile.begin() + pcard->current.sequence);
 		reset_sequence(playerid, LOCATION_EXILE);
+		break;
+	case LOCATION_ORDER:
+		player[playerid].list_order.erase(player[playerid].list_order.begin() + pcard->current.sequence);
+		reset_sequence(playerid, LOCATION_ORDER);
+		break;
+	case LOCATION_DAMAGE:
+		player[playerid].list_damage.erase(player[playerid].list_damage.begin() + pcard->current.sequence);
+		reset_sequence(playerid, LOCATION_DAMAGE);
+		break;
+	case LOCATION_SPARE:
+		player[playerid].list_spare.erase(player[playerid].list_spare.begin() + pcard->current.sequence);
+		reset_sequence(playerid, LOCATION_SPARE);
+		break;
+	case LOCATION_GZONE:
+		player[playerid].list_gzone.erase(player[playerid].list_gzone.begin() + pcard->current.sequence);
+		reset_sequence(playerid, LOCATION_GZONE);
 		break;
 	case LOCATION_REMOVED:
 		player[playerid].list_remove.erase(player[playerid].list_remove.begin() + pcard->current.sequence);
@@ -373,6 +417,50 @@ void field::move_card(uint8 playerid, card* pcard, uint16 location, uint8 sequen
 					player[pcard->current.controler].list_exile.erase(player[pcard->current.controler].list_exile.begin() + pcard->current.sequence);
 					player[pcard->current.controler].list_exile.push_back(pcard);
 					reset_sequence(pcard->current.controler, LOCATION_EXILE);
+					pduel->write_buffer40(pcard->new_get_info_location());
+					pduel->write_buffer32(pcard->current.reason);
+				} else if(location == LOCATION_ORDER) {
+					if(pcard->current.sequence == player[pcard->current.controler].list_order.size() - 1)
+						return;
+					pduel->write_buffer8(MSG_MOVE);
+					pduel->write_buffer32(pcard->data.code);
+					pduel->write_buffer40(pcard->new_get_info_location());
+					player[pcard->current.controler].list_order.erase(player[pcard->current.controler].list_order.begin() + pcard->current.sequence);
+					player[pcard->current.controler].list_order.push_back(pcard);
+					reset_sequence(pcard->current.controler, LOCATION_ORDER);
+					pduel->write_buffer40(pcard->new_get_info_location());
+					pduel->write_buffer32(pcard->current.reason);
+				} else if(location == LOCATION_DAMAGE) {
+					if(pcard->current.sequence == player[pcard->current.controler].list_damage.size() - 1)
+						return;
+					pduel->write_buffer8(MSG_MOVE);
+					pduel->write_buffer32(pcard->data.code);
+					pduel->write_buffer40(pcard->new_get_info_location());
+					player[pcard->current.controler].list_damage.erase(player[pcard->current.controler].list_damage.begin() + pcard->current.sequence);
+					player[pcard->current.controler].list_damage.push_back(pcard);
+					reset_sequence(pcard->current.controler, LOCATION_DAMAGE);
+					pduel->write_buffer40(pcard->new_get_info_location());
+					pduel->write_buffer32(pcard->current.reason);
+				} else if(location == LOCATION_SPARE) {
+					if(pcard->current.sequence == player[pcard->current.controler].list_spare.size() - 1)
+						return;
+					pduel->write_buffer8(MSG_MOVE);
+					pduel->write_buffer32(pcard->data.code);
+					pduel->write_buffer40(pcard->new_get_info_location());
+					player[pcard->current.controler].list_spare.erase(player[pcard->current.controler].list_spare.begin() + pcard->current.sequence);
+					player[pcard->current.controler].list_spare.push_back(pcard);
+					reset_sequence(pcard->current.controler, LOCATION_SPARE);
+					pduel->write_buffer40(pcard->new_get_info_location());
+					pduel->write_buffer32(pcard->current.reason);
+				} else if(location == LOCATION_GZONE) {
+					if(pcard->current.sequence == player[pcard->current.controler].list_gzone.size() - 1)
+						return;
+					pduel->write_buffer8(MSG_MOVE);
+					pduel->write_buffer32(pcard->data.code);
+					pduel->write_buffer40(pcard->new_get_info_location());
+					player[pcard->current.controler].list_gzone.erase(player[pcard->current.controler].list_gzone.begin() + pcard->current.sequence);
+					player[pcard->current.controler].list_gzone.push_back(pcard);
+					reset_sequence(pcard->current.controler, LOCATION_GZONE);
 					pduel->write_buffer40(pcard->new_get_info_location());
 					pduel->write_buffer32(pcard->current.reason);
 				} else if(location == LOCATION_REMOVED) {
@@ -588,6 +676,34 @@ card* field::get_field_card(uint32 playerid, uint32 location, uint32 sequence) {
 	case LOCATION_EXILE: {
 		if(sequence < player[playerid].list_exile.size())
 			return player[playerid].list_exile[sequence];
+		else
+			return nullptr;
+		break;
+	}
+	case LOCATION_ORDER: {
+		if(sequence < player[playerid].list_order.size())
+			return player[playerid].list_order[sequence];
+		else
+			return nullptr;
+		break;
+	}
+	case LOCATION_DAMAGE: {
+		if(sequence < player[playerid].list_damage.size())
+			return player[playerid].list_damage[sequence];
+		else
+			return nullptr;
+		break;
+	}
+	case LOCATION_SPARE: {
+		if(sequence < player[playerid].list_spare.size())
+			return player[playerid].list_spare[sequence];
+		else
+			return nullptr;
+		break;
+	}
+	case LOCATION_GZONE: {
+		if(sequence < player[playerid].list_gzone.size())
+			return player[playerid].list_gzone[sequence];
 		else
 			return nullptr;
 		break;
@@ -1073,6 +1189,22 @@ void field::reset_sequence(uint8 playerid, uint16 location) {
 		for(auto& pcard : player[playerid].list_exile)
 			pcard->current.sequence = i++;
 		break;
+	case LOCATION_ORDER:
+		for(auto& pcard : player[playerid].list_order)
+			pcard->current.sequence = i++;
+		break;
+	case LOCATION_DAMAGE:
+		for(auto& pcard : player[playerid].list_damage)
+			pcard->current.sequence = i++;
+		break;
+	case LOCATION_SPARE:
+		for(auto& pcard : player[playerid].list_spare)
+			pcard->current.sequence = i++;
+		break;
+	case LOCATION_GZONE:
+		for(auto& pcard : player[playerid].list_gzone)
+			pcard->current.sequence = i++;
+		break;
 	case LOCATION_REMOVED:
 		for(auto& pcard : player[playerid].list_remove)
 			pcard->current.sequence = i++;
@@ -1423,6 +1555,14 @@ void field::filter_affected_cards(effect* peffect, card_set* cset) {
 			cvec.push_back(&player[self].list_grave);
 		if(range & LOCATION_EXILE)
 			cvec.push_back(&player[self].list_exile);
+		if(range & LOCATION_ORDER)
+			cvec.push_back(&player[self].list_order);
+		if(range & LOCATION_DAMAGE)
+			cvec.push_back(&player[self].list_damage);
+		if(range & LOCATION_SPARE)
+			cvec.push_back(&player[self].list_spare);
+		if(range & LOCATION_GZONE)
+			cvec.push_back(&player[self].list_gzone);
 		if(range & LOCATION_REMOVED)
 			cvec.push_back(&player[self].list_remove);
 		if(range & LOCATION_HAND)
@@ -1458,6 +1598,14 @@ void field::filter_inrange_cards(effect* peffect, card_set* cset) {
 			cvec.push_back(&player[self].list_grave);
 		if(range & LOCATION_EXILE)
 			cvec.push_back(&player[self].list_exile);
+		if(range & LOCATION_ORDER)
+			cvec.push_back(&player[self].list_order);
+		if(range & LOCATION_DAMAGE)
+			cvec.push_back(&player[self].list_damage);
+		if(range & LOCATION_SPARE)
+			cvec.push_back(&player[self].list_spare);
+		if(range & LOCATION_GZONE)
+			cvec.push_back(&player[self].list_gzone);
 		if(range & LOCATION_REMOVED)
 			cvec.push_back(&player[self].list_remove);
 		if(range & LOCATION_HAND)
@@ -1658,6 +1806,78 @@ int32 field::filter_matching_card(int32 findex, uint8 self, uint32 location1, ui
 				}
 			}
 		}
+		if(location & LOCATION_ORDER) {
+			for(auto cit = player[self].list_order.rbegin(); cit != player[self].list_order.rend(); ++cit) {
+				if(*cit != pexception && !(pexgroup && pexgroup->has_card(*cit))
+				        && pduel->lua->check_matching(*cit, findex, extraargs)
+				        && (!is_target || (*cit)->is_capable_be_effect_target(core.reason_effect, core.reason_player))) {
+					if(pret) {
+						*pret = *cit;
+						return TRUE;
+					}
+					++count;
+					if(fcount && count >= fcount)
+						return TRUE;
+					if(pgroup) {
+						pgroup->container.insert(*cit);
+					}
+				}
+			}
+		}
+		if(location & LOCATION_DAMAGE) {
+			for(auto cit = player[self].list_damage.rbegin(); cit != player[self].list_damage.rend(); ++cit) {
+				if(*cit != pexception && !(pexgroup && pexgroup->has_card(*cit))
+				        && pduel->lua->check_matching(*cit, findex, extraargs)
+				        && (!is_target || (*cit)->is_capable_be_effect_target(core.reason_effect, core.reason_player))) {
+					if(pret) {
+						*pret = *cit;
+						return TRUE;
+					}
+					++count;
+					if(fcount && count >= fcount)
+						return TRUE;
+					if(pgroup) {
+						pgroup->container.insert(*cit);
+					}
+				}
+			}
+		}
+		if(location & LOCATION_SPARE) {
+			for(auto cit = player[self].list_spare.rbegin(); cit != player[self].list_spare.rend(); ++cit) {
+				if(*cit != pexception && !(pexgroup && pexgroup->has_card(*cit))
+				        && pduel->lua->check_matching(*cit, findex, extraargs)
+				        && (!is_target || (*cit)->is_capable_be_effect_target(core.reason_effect, core.reason_player))) {
+					if(pret) {
+						*pret = *cit;
+						return TRUE;
+					}
+					++count;
+					if(fcount && count >= fcount)
+						return TRUE;
+					if(pgroup) {
+						pgroup->container.insert(*cit);
+					}
+				}
+			}
+		}
+		if(location & LOCATION_GZONE) {
+			for(auto cit = player[self].list_gzone.rbegin(); cit != player[self].list_gzone.rend(); ++cit) {
+				if(*cit != pexception && !(pexgroup && pexgroup->has_card(*cit))
+				        && pduel->lua->check_matching(*cit, findex, extraargs)
+				        && (!is_target || (*cit)->is_capable_be_effect_target(core.reason_effect, core.reason_player))) {
+					if(pret) {
+						*pret = *cit;
+						return TRUE;
+					}
+					++count;
+					if(fcount && count >= fcount)
+						return TRUE;
+					if(pgroup) {
+						pgroup->container.insert(*cit);
+					}
+				}
+			}
+		}
 		if(location & LOCATION_REMOVED) {
 			for(auto cit = player[self].list_remove.rbegin(); cit != player[self].list_remove.rend(); ++cit) {
 				if(*cit != pexception && !(pexgroup && pexgroup->has_card(*cit))
@@ -1748,6 +1968,26 @@ int32 field::filter_field_card(uint8 self, uint32 location1, uint32 location2, g
 			if(pgroup)
 				pgroup->container.insert(player[self].list_exile.rbegin(), player[self].list_exile.rend());
 			count += (uint32)player[self].list_exile.size();
+		}
+		if(location & LOCATION_ORDER) {
+			if(pgroup)
+				pgroup->container.insert(player[self].list_order.rbegin(), player[self].list_order.rend());
+			count += (uint32)player[self].list_order.size();
+		}
+		if(location & LOCATION_DAMAGE) {
+			if(pgroup)
+				pgroup->container.insert(player[self].list_damage.rbegin(), player[self].list_damage.rend());
+			count += (uint32)player[self].list_damage.size();
+		}
+		if(location & LOCATION_SPARE) {
+			if(pgroup)
+				pgroup->container.insert(player[self].list_spare.rbegin(), player[self].list_spare.rend());
+			count += (uint32)player[self].list_spare.size();
+		}
+		if(location & LOCATION_GZONE) {
+			if(pgroup)
+				pgroup->container.insert(player[self].list_gzone.rbegin(), player[self].list_gzone.rend());
+			count += (uint32)player[self].list_gzone.size();
 		}
 		if(location & LOCATION_REMOVED) {
 			if(pgroup)

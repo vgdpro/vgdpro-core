@@ -294,7 +294,7 @@ void field::move_to_field(card* target, uint32 move_player, uint32 playerid, uin
 		return;
 	if(destination == target->current.location && playerid == target->current.controler && target->current.pzone == !!pzone)
 		return;
-	target->to_field_param = (move_player << 24) + (playerid << 16) + (destination << 8) + positions;
+	target->to_field_param = ((uint64)move_player << 32) + ((uint64)playerid << 24) + ((uint64)destination << 8) + (uint64)positions;
 	add_process(PROCESSOR_MOVETOFIELD, 0, 0, (group*)target, enable, ret + (pzone << 8), zone);
 }
 void field::change_position(card_set* targets, effect* reason_effect, uint32 reason_player, uint32 au, uint32 ad, uint32 du, uint32 dd, uint32 flag, uint32 enable) {
@@ -3909,6 +3909,7 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 			         || (dest == LOCATION_REMOVED && !pcard->is_removeable(core.reason_player, pcard->sendto_param.position, reason))
 			         || (dest == LOCATION_GRAVE && !pcard->is_capable_send_to_grave(core.reason_player))
 					 || (dest == LOCATION_EXILE && !pcard->is_capable_send_to_exile(core.reason_player))
+					 || (dest &(LOCATION_ORDER|LOCATION_DAMAGE|LOCATION_SPARE|LOCATION_GZONE))
 			         //|| (dest == LOCATION_EXTRA && !pcard->is_capable_send_to_extra(core.reason_player))
 					 )) {
 				pcard->current.reason = pcard->temp.reason;
@@ -4558,9 +4559,9 @@ int32 field::discard_deck(uint16 step, uint8 playerid, uint8 count, uint32 reaso
 // ret: 0 = default, 1 = return after temporarily banished, 2 = trap_monster return to LOCATION_SZONE
 // call move_card() in step 2
 int32 field::move_to_field(uint16 step, card* target, uint32 enable, uint32 ret, uint32 pzone, uint32 zone) {
-	uint32 move_player = (target->to_field_param >> 24) & 0xff;
-	uint32 playerid = (target->to_field_param >> 16) & 0xff;
-	uint32 location = (target->to_field_param >> 8) & 0xff;
+	uint32 move_player = (target->to_field_param >> 32) & 0xff;
+	uint32 playerid = (target->to_field_param >> 24) & 0xff;
+	uint32 location = (target->to_field_param >> 8) & 0xffff;
 	uint32 positions = (target->to_field_param) & 0xff;
 	switch(step) {
 	case 0: {

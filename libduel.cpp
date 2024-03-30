@@ -104,6 +104,33 @@ int32 scriptlib::duel_exile(lua_State *L) {
 		return 1;
 	});
 }
+int32 scriptlib::duel_send_to(lua_State *L) {
+	check_action_permission(L);
+	check_param_count(L, 2);
+	card* pcard = 0;
+	group* pgroup = 0;
+	duel* pduel = 0;
+	if(check_param(L, PARAM_TYPE_CARD, 1, TRUE)) {
+		pcard = *(card**) lua_touserdata(L, 1);
+		pduel = pcard->pduel;
+	} else if(check_param(L, PARAM_TYPE_GROUP, 1, TRUE)) {
+		pgroup = *(group**) lua_touserdata(L, 1);
+		pduel = pgroup->pduel;
+	} else
+		luaL_error(L, "Parameter %d should be \"Card\" or \"Group\".", 1);
+	uint32 reason = lua_tointeger(L, 2);
+	uint32 location = lua_tointeger(L, 3);
+	uint32 position = lua_tointeger(L, 4);
+	if(pcard)
+		pduel->game_field->send_to(pcard, pduel->game_field->core.reason_effect, reason, pduel->game_field->core.reason_player, PLAYER_NONE, location, 0, position);
+	else
+		pduel->game_field->send_to(&(pgroup->container), pduel->game_field->core.reason_effect, reason, pduel->game_field->core.reason_player, PLAYER_NONE, location, 0, position);
+	return lua_yieldk(L, 0, (lua_KContext)pduel, [](lua_State *L, int32 status, lua_KContext ctx) {
+		duel* pduel = (duel*)ctx;
+		lua_pushinteger(L, pduel->game_field->returns.ivalue[0]);
+		return 1;
+	});
+}
 int32 scriptlib::duel_register_effect(lua_State *L) {
 	check_param_count(L, 2);
 	check_param(L, PARAM_TYPE_EFFECT, 1);
@@ -883,7 +910,7 @@ int32 scriptlib::duel_move_to_field(lua_State *L) {
 	uint32 destination = (uint32)lua_tointeger(L, 4);
 	uint32 positions = (uint32)lua_tointeger(L, 5);
 	uint32 enable = lua_toboolean(L, 6);
-	uint32 zone = 0xff;
+	uint32 zone = 0xffff;
 	if(lua_gettop(L) > 6)
 		zone = (uint32)lua_tointeger(L, 7);
 	if(destination == LOCATION_FZONE) {
@@ -898,7 +925,6 @@ int32 scriptlib::duel_move_to_field(lua_State *L) {
 	duel* pduel = pcard->pduel;
 	pcard->enable_field_effect(false);
 	pduel->game_field->adjust_instant();
-	pduel->game_field->move_to_field(pcard, move_player, playerid, destination, positions, enable, 0, pzone, zone);
 	return lua_yieldk(L, 0, (lua_KContext)pduel, [](lua_State *L, int32 status, lua_KContext ctx) {
 		duel* pduel = (duel*)ctx;
 		lua_pushboolean(L, pduel->game_field->returns.ivalue[0]);
@@ -915,7 +941,7 @@ int32 scriptlib::duel_return_to_field(lua_State *L) {
 	int32 pos = pcard->previous.position;
 	if(lua_gettop(L) >= 2)
 		pos = (int32)lua_tointeger(L, 2);
-	uint32 zone = 0xff;
+	uint32 zone = 0xffff;
 	if(lua_gettop(L) >= 3)
 		zone = (uint32)lua_tointeger(L, 3);
 	duel* pduel = pcard->pduel;
@@ -4812,6 +4838,7 @@ int32 scriptlib::duel_majestic_copy(lua_State *L) {
 static const struct luaL_Reg duellib[] = {
 	{ "EnableGlobalFlag", scriptlib::duel_enable_global_flag },
 	{ "Exile", scriptlib::duel_exile },
+	{ "Sendto", scriptlib::duel_send_to },
 	{ "GetLP", scriptlib::duel_get_lp },
 	{ "SetLP", scriptlib::duel_set_lp },
 	{ "IsTurnPlayer", scriptlib::duel_is_turn_player },
