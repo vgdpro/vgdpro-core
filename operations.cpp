@@ -3868,7 +3868,7 @@ int32 field::release(uint16 step, group * targets, effect * reason_effect, uint3
 }
 int32 field::send_replace(uint16 step, group * targets, card * target) {
 	uint8 playerid = target->sendto_param.playerid;
-	uint8 dest = target->sendto_param.location;
+	uint16 dest = target->sendto_param.location;
 	if(targets->container.find(target) == targets->container.end())
 		return TRUE;
 	if(target->current.location == dest && target->current.controler == playerid) {
@@ -4199,7 +4199,7 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 	case 8: {
 		exargs* param = (exargs*)targets;
 		card* pcard = *param->cvit;
-		uint8 oloc = pcard->current.location;
+		uint16 oloc = pcard->current.location;
 		uint8 seq = returns.bvalue[2];
 		pduel->write_buffer8(MSG_MOVE);
 		pduel->write_buffer32(pcard->data.code);
@@ -4457,7 +4457,7 @@ int32 field::discard_deck(uint16 step, uint8 playerid, uint8 count, uint32 reaso
 			if(player[playerid].list_main.size() == 0)
 				break;
 			card* pcard = player[playerid].list_main.back();
-			uint8 dest = pcard->sendto_param.location;
+			uint16 dest = pcard->sendto_param.location;
 			if(dest == LOCATION_GRAVE)
 				pcard->reset(RESET_TOGRAVE, RESET_EVENT);
 			else if(dest == LOCATION_HAND) {

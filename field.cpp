@@ -956,7 +956,7 @@ int32 field::check_extra_link(int32 playerid, card* pcard, int32 sequence) {
 	if(player[playerid].list_mzone[sequence])
 		return FALSE;
 	uint8 cur_controler = pcard->current.controler;
-	uint8 cur_location = pcard->current.location;
+	uint16 cur_location = pcard->current.location;
 	uint8 cur_sequence = pcard->current.sequence;
 	player[playerid].list_mzone[sequence] = pcard;
 	pcard->current.controler = playerid;
