@@ -274,7 +274,7 @@ void field::send_to(card_set* targets, effect* reason_effect, uint32 reason, uin
 		if(destination == LOCATION_GRAVE && pcard->current.location == LOCATION_REMOVED)
 			pcard->current.reason |= REASON_RETURN;
 		uint32 pos = position;
-		if(destination != LOCATION_REMOVED)
+		if(!(destination & (LOCATION_REMOVED|LOCATION_DAMAGE|LOCATION_SPARE)))
 			pos = POS_FACEUP;
 		else if(position == 0)
 			pos = pcard->current.position;
