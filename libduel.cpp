@@ -925,6 +925,7 @@ int32 scriptlib::duel_move_to_field(lua_State *L) {
 	duel* pduel = pcard->pduel;
 	pcard->enable_field_effect(false);
 	pduel->game_field->adjust_instant();
+	pduel->game_field->move_to_field(pcard, move_player, playerid, destination, positions, enable, 0, pzone, zone);
 	return lua_yieldk(L, 0, (lua_KContext)pduel, [](lua_State *L, int32 status, lua_KContext ctx) {
 		duel* pduel = (duel*)ctx;
 		lua_pushboolean(L, pduel->game_field->returns.ivalue[0]);
