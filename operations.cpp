@@ -3909,7 +3909,6 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 			         || (dest == LOCATION_REMOVED && !pcard->is_removeable(core.reason_player, pcard->sendto_param.position, reason))
 			         || (dest == LOCATION_GRAVE && !pcard->is_capable_send_to_grave(core.reason_player))
 					 || (dest == LOCATION_EXILE && !pcard->is_capable_send_to_exile(core.reason_player))
-					 || (dest &(LOCATION_ORDER|LOCATION_DAMAGE|LOCATION_SPARE|LOCATION_GZONE))
 			         //|| (dest == LOCATION_EXTRA && !pcard->is_capable_send_to_extra(core.reason_player))
 					 )) {
 				pcard->current.reason = pcard->temp.reason;
