@@ -3354,7 +3354,8 @@ void field::calculate_battle_damage(effect** pdamchange, card** preason_card, ui
 		da = core.attack_target->get_battle_attack();
 		dd = core.attack_target->get_battle_defense();
 		pd = core.attack_target->current.controler;
-		if(core.attack_target->is_position(POS_ATTACK)) {
+		//core.attack_target->is_position(POS_ATTACK)
+		if(true) {
 			defender_value = da;
 			if(attacker_value > defender_value) {
 				damaged_player = pd;
