@@ -72,6 +72,7 @@ field::field(duel* pduel) {
 		player[i].list_grave.reserve(75);
 		player[i].list_exile.reserve(75);
 		player[i].list_order.reserve(75);
+		player[i].list_emblem.reserve(75);
 		player[i].list_damage.reserve(75);
 		player[i].list_spare.reserve(75);
 		player[i].list_gzone.reserve(75);
@@ -108,6 +109,7 @@ void field::reload_field_info() {
 		pduel->write_buffer8((uint8)player[playerid].list_grave.size());
 		pduel->write_buffer8((uint8)player[playerid].list_exile.size());
 		pduel->write_buffer8((uint8)player[playerid].list_order.size());
+		pduel->write_buffer8((uint8)player[playerid].list_emblem.size());
 		pduel->write_buffer8((uint8)player[playerid].list_damage.size());
 		pduel->write_buffer8((uint8)player[playerid].list_spare.size());
 		pduel->write_buffer8((uint8)player[playerid].list_gzone.size());
@@ -194,6 +196,11 @@ void field::add_card(uint8 playerid, card* pcard, uint16 location, uint8 sequenc
 		pcard->current.sequence = (uint8)player[playerid].list_order.size() - 1;
 		break;
 	}
+	case LOCATION_EMBLEM: {
+		player[playerid].list_emblem.push_back(pcard);
+		pcard->current.sequence = (uint8)player[playerid].list_emblem.size() - 1;
+		break;
+	}
 	case LOCATION_DAMAGE: {
 		player[playerid].list_damage.push_back(pcard);
 		pcard->current.sequence = (uint8)player[playerid].list_damage.size() - 1;
@@ -273,6 +280,10 @@ void field::remove_card(card* pcard) {
 	case LOCATION_ORDER:
 		player[playerid].list_order.erase(player[playerid].list_order.begin() + pcard->current.sequence);
 		reset_sequence(playerid, LOCATION_ORDER);
+		break;
+	case LOCATION_EMBLEM:
+		player[playerid].list_emblem.erase(player[playerid].list_emblem.begin() + pcard->current.sequence);
+		reset_sequence(playerid, LOCATION_EMBLEM);
 		break;
 	case LOCATION_DAMAGE:
 		player[playerid].list_damage.erase(player[playerid].list_damage.begin() + pcard->current.sequence);
@@ -428,6 +439,17 @@ void field::move_card(uint8 playerid, card* pcard, uint16 location, uint8 sequen
 					player[pcard->current.controler].list_order.erase(player[pcard->current.controler].list_order.begin() + pcard->current.sequence);
 					player[pcard->current.controler].list_order.push_back(pcard);
 					reset_sequence(pcard->current.controler, LOCATION_ORDER);
+					pduel->write_buffer40(pcard->new_get_info_location());
+					pduel->write_buffer32(pcard->current.reason);
+				} else if(location == LOCATION_EMBLEM) {
+					if(pcard->current.sequence == player[pcard->current.controler].list_emblem.size() - 1)
+						return;
+					pduel->write_buffer8(MSG_MOVE);
+					pduel->write_buffer32(pcard->data.code);
+					pduel->write_buffer40(pcard->new_get_info_location());
+					player[pcard->current.controler].list_emblem.erase(player[pcard->current.controler].list_emblem.begin() + pcard->current.sequence);
+					player[pcard->current.controler].list_emblem.push_back(pcard);
+					reset_sequence(pcard->current.controler, LOCATION_EMBLEM);
 					pduel->write_buffer40(pcard->new_get_info_location());
 					pduel->write_buffer32(pcard->current.reason);
 				} else if(location == LOCATION_DAMAGE) {
@@ -683,6 +705,13 @@ card* field::get_field_card(uint32 playerid, uint32 location, uint32 sequence) {
 	case LOCATION_ORDER: {
 		if(sequence < player[playerid].list_order.size())
 			return player[playerid].list_order[sequence];
+		else
+			return nullptr;
+		break;
+	}
+	case LOCATION_EMBLEM: {
+		if(sequence < player[playerid].list_emblem.size())
+			return player[playerid].list_emblem[sequence];
 		else
 			return nullptr;
 		break;
@@ -1193,6 +1222,10 @@ void field::reset_sequence(uint8 playerid, uint16 location) {
 		for(auto& pcard : player[playerid].list_order)
 			pcard->current.sequence = i++;
 		break;
+	case LOCATION_EMBLEM:
+		for(auto& pcard : player[playerid].list_emblem)
+			pcard->current.sequence = i++;
+		break;
 	case LOCATION_DAMAGE:
 		for(auto& pcard : player[playerid].list_damage)
 			pcard->current.sequence = i++;
@@ -1557,6 +1590,8 @@ void field::filter_affected_cards(effect* peffect, card_set* cset) {
 			cvec.push_back(&player[self].list_exile);
 		if(range & LOCATION_ORDER)
 			cvec.push_back(&player[self].list_order);
+		if(range & LOCATION_EMBLEM)
+			cvec.push_back(&player[self].list_emblem);
 		if(range & LOCATION_DAMAGE)
 			cvec.push_back(&player[self].list_damage);
 		if(range & LOCATION_SPARE)
@@ -1600,6 +1635,8 @@ void field::filter_inrange_cards(effect* peffect, card_set* cset) {
 			cvec.push_back(&player[self].list_exile);
 		if(range & LOCATION_ORDER)
 			cvec.push_back(&player[self].list_order);
+		if(range & LOCATION_EMBLEM)
+			cvec.push_back(&player[self].list_emblem);
 		if(range & LOCATION_DAMAGE)
 			cvec.push_back(&player[self].list_damage);
 		if(range & LOCATION_SPARE)
@@ -1824,6 +1861,24 @@ int32 field::filter_matching_card(int32 findex, uint8 self, uint32 location1, ui
 				}
 			}
 		}
+		if(location & LOCATION_EMBLEM) {
+			for(auto cit = player[self].list_emblem.rbegin(); cit != player[self].list_emblem.rend(); ++cit) {
+				if(*cit != pexception && !(pexgroup && pexgroup->has_card(*cit))
+				        && pduel->lua->check_matching(*cit, findex, extraargs)
+				        && (!is_target || (*cit)->is_capable_be_effect_target(core.reason_effect, core.reason_player))) {
+					if(pret) {
+						*pret = *cit;
+						return TRUE;
+					}
+					++count;
+					if(fcount && count >= fcount)
+						return TRUE;
+					if(pgroup) {
+						pgroup->container.insert(*cit);
+					}
+				}
+			}
+		}
 		if(location & LOCATION_DAMAGE) {
 			for(auto cit = player[self].list_damage.rbegin(); cit != player[self].list_damage.rend(); ++cit) {
 				if(*cit != pexception && !(pexgroup && pexgroup->has_card(*cit))
@@ -1973,6 +2028,11 @@ int32 field::filter_field_card(uint8 self, uint32 location1, uint32 location2, g
 			if(pgroup)
 				pgroup->container.insert(player[self].list_order.rbegin(), player[self].list_order.rend());
 			count += (uint32)player[self].list_order.size();
+		}
+		if(location & LOCATION_EMBLEM) {
+			if(pgroup)
+				pgroup->container.insert(player[self].list_emblem.rbegin(), player[self].list_emblem.rend());
+			count += (uint32)player[self].list_emblem.size();
 		}
 		if(location & LOCATION_DAMAGE) {
 			if(pgroup)

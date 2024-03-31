@@ -96,6 +96,7 @@ struct player_info {
 	card_vector list_hand;
 	card_vector list_remove;
 	card_vector list_extra;
+	card_vector list_emblem;
 	card_vector tag_list_main;
 	card_vector tag_list_hand;
 	card_vector tag_list_extra;
