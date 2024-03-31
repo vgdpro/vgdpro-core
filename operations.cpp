@@ -4576,6 +4576,8 @@ int32 field::move_to_field(uint16 step, card* target, uint32 enable, uint32 ret,
 					destroy(pcard, 0, REASON_RULE, pcard->current.controler);
 				adjust_all();
 			}
+		} else if (location == LOCATION_SZONE){
+			adjust_all();
 		} else if(pzone && location == LOCATION_SZONE && (target->data.type & TYPE_PENDULUM)) {
 			uint32 flag = 0;
 			if(is_location_useable(playerid, LOCATION_PZONE, 0))
@@ -4646,7 +4648,12 @@ int32 field::move_to_field(uint16 step, card* target, uint32 enable, uint32 ret,
 	case 1: {
 		uint32 seq = returns.bvalue[2];
 		if(location == LOCATION_SZONE && zone == 0x1 << 5 )//&& (target->data.type & TYPE_FIELD) && (target->data.type & TYPE_SPELL)
+		{
 			seq = 5;
+		}
+		else if(location == LOCATION_SZONE){
+			seq = 2;
+		}
 		if(ret != 1) {
 			if(location != target->current.location) {
 				uint32 resetflag = 0;
