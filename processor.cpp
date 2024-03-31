@@ -5064,7 +5064,7 @@ int32 field::adjust_step(uint16 step) {
 				if(pcard)
 					fidset.insert(pcard->fieldid_r);
 			}
-			if(fidset != core.opp_mzone || !confirm_attack_target())
+			if(!confirm_attack_target())
 				core.attack_rollback = TRUE;
 		} else {
 			if(core.attacker->current.location != LOCATION_MZONE || core.attacker->fieldid_r != core.pre_field[0]
