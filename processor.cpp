@@ -2063,7 +2063,8 @@ int32 field::process_idle_command(uint16 step) {
 		chain newchain;
 		core.to_bp = TRUE;
 		core.to_ep = TRUE;
-		if((!(core.duel_options & DUEL_ATTACK_FIRST_TURN) && infos.turn_id == 1) || infos.phase == PHASE_MAIN2 || is_player_affected_by_effect(infos.turn_player, EFFECT_CANNOT_BP))
+		//(!(core.duel_options & DUEL_ATTACK_FIRST_TURN) && infos.turn_id == 1) || 
+		if(infos.phase == PHASE_MAIN2 || is_player_affected_by_effect(infos.turn_player, EFFECT_CANNOT_BP))
 			core.to_bp = FALSE;
 		if(infos.phase == PHASE_MAIN1) {
 			for(auto& pcard : player[infos.turn_player].list_mzone) {
@@ -2465,6 +2466,13 @@ int32 field::process_battle_command(uint16 step) {
 			}
 			if(first_attack.size())
 				core.attackable_cards = first_attack;
+		}
+		if(core.attackable_cards.size() ==0||infos.turn_id ==1){
+			core.units.begin()->step = 41;
+			core.units.begin()->arg1 = 2;
+			core.units.begin()->arg2 = 0;
+			adjust_all();
+			return false;
 		}
 		core.to_m2 = TRUE;
 		core.to_ep = TRUE;
