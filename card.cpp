@@ -309,7 +309,7 @@ int32 card::get_infos(byte* buf, uint32 query_flag, int32 use_cache) {
 	}
 	if(query_flag & QUERY_EQUIP_CARD) {
 		if (equiping_target) {
-			*p = equiping_target->get_info_location();
+			*p = equiping_target->get_info_location_for_info();
 			++p;
 		}
 		else
@@ -319,7 +319,7 @@ int32 card::get_infos(byte* buf, uint32 query_flag, int32 use_cache) {
 		*p = (int32)effect_target_cards.size();
 		++p;
 		for (auto& pcard : effect_target_cards) {
-			*p = pcard->get_info_location();
+			*p = pcard->get_info_location_for_info();
 			++p;
 		}
 	}
@@ -417,6 +417,19 @@ uint32 card::get_info_location() {
 		uint32 s = current.sequence;
 		uint32 ss = current.position;
 		return c + (l << 8) + (s << 16) + (ss << 24);
+	}
+}
+uint32 card::get_info_location_for_info() {
+	if(overlay_target) {
+		uint32 c = overlay_target->current.controler;
+		uint32 l = overlay_target->current.location | LOCATION_OVERLAY;
+		uint32 s = overlay_target->current.sequence;
+		return c + (l << 8) + (s << 24);
+	} else {
+		uint32 c = current.controler;
+		uint32 l = current.location;
+		uint32 s = current.sequence;
+		return c + (l << 8) + (s << 24);
 	}
 }
 uint64 card::new_get_info_location() {

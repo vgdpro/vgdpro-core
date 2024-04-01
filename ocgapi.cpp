@@ -183,7 +183,7 @@ extern "C" DECL_DLLEXPORT int32 query_card(intptr_t pduel, uint8 playerid, uint1
 		return LEN_FAIL;
 	duel* ptduel = (duel*)pduel;
 	card* pcard = nullptr;
-	location &= 0x7f;
+	location &= 0xFC7F;
 	if(location & LOCATION_ONFIELD)
 		pcard = ptduel->game_field->get_field_card(playerid, location, sequence);
 	else {

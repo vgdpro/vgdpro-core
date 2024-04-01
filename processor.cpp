@@ -3904,9 +3904,10 @@ int32 field::process_turn(uint16 step, uint8 turn_player) {
 			core.skip_m2 = TRUE;
 		}
 		//Main2
-		infos.phase = PHASE_MAIN2;
-		core.phase_action = FALSE;
-		raise_event((card*)0, EVENT_PHASE_START + PHASE_MAIN2, 0, 0, 0, turn_player, 0);
+		core.units.begin()->step = 14;
+		// infos.phase = PHASE_MAIN2;
+		// core.phase_action = FALSE;
+		// raise_event((card*)0, EVENT_PHASE_START + PHASE_MAIN2, 0, 0, 0, turn_player, 0);
 		process_instant_event();
 		adjust_all();
 		return FALSE;
