@@ -514,6 +514,14 @@ bool card::check_card_setcode(uint32 code, uint32 value) {
 	::read_card(code, &dat);
 	return dat.is_setcode(value);
 }
+uint32 card::get_country(uint32 country) {
+	uint32 code1 = get_code();
+	card_data dat1;
+	if (code1 == data.code) {
+		return code1.country;
+	}
+	return code1.country;
+}
 int32 card::is_set_card(uint32 set_code) {
 	uint32 code1 = get_code();
 	card_data dat1;

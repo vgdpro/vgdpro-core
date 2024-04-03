@@ -20,6 +20,7 @@ struct card_data {
 	uint32 lscale{};
 	uint32 rscale{};
 	uint32 link_marker{};
+	uint16 country{};
 
 	void clear() {
 		code = 0;
@@ -35,6 +36,7 @@ struct card_data {
 		lscale = 0;
 		rscale = 0;
 		link_marker = 0;
+		country =0;
 	}
 
 	bool is_setcode(uint32 value) const {

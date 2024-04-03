@@ -301,6 +301,13 @@ int32 scriptlib::card_get_level(lua_State *L) {
 	lua_pushinteger(L, pcard->get_level());
 	return 1;
 }
+int32 scriptlib::card_get_country(lua_State *L) {
+	check_param_count(L, 1);
+	check_param(L, PARAM_TYPE_CARD, 1);
+	card* pcard = *(card**) lua_touserdata(L, 1);
+	lua_pushinteger(L, pcard->get_country());
+	return 1;
+}
 int32 scriptlib::card_get_rank(lua_State *L) {
 	check_param_count(L, 1);
 	check_param(L, PARAM_TYPE_CARD, 1);
@@ -3396,6 +3403,7 @@ static const struct luaL_Reg cardlib[] = {
 	{ "GetSynchroType", scriptlib::card_get_synchro_type },
 	{ "GetXyzType", scriptlib::card_get_xyz_type },
 	{ "GetLinkType", scriptlib::card_get_link_type },
+	{ "GetCountry", scriptlib::card_get_country },
 	{ "GetLevel", scriptlib::card_get_level },
 	{ "GetRank", scriptlib::card_get_rank },
 	{ "GetLink", scriptlib::card_get_link },
