@@ -2302,9 +2302,19 @@ int32 field::process_idle_command(uint16 step) {
 		card* target = core.repositionable_cards[returns.ivalue[0] >> 16];
 		int con = target->current.controler;
 		int seq = target->current.sequence;
-		if(!player[infos.turn_player].list_mzone[1])
+		int arr = 0;
+		duel* pduel = target->pduel;
+		if (seq == 0) arr++;
+		else if (seq == 3) arr = 4;
+		else if (seq == 4) arr = 3;
+		if(!player[infos.turn_player].list_mzone[arr])
+			move_card(infos.turn_player,target,LOCATION_MZONE,arr);
+		else
 		{
-			move_card(infos.turn_player,target,LOCATION_MZONE,1);
+			pduel->game_field->swap_card(target, player[infos.turn_player].list_mzone[arr]);
+			field::card_set swapped;
+			swapped.insert(target);
+			swapped.insert(player[infos.turn_player].list_mzone[arr]);
 		}
 		core.units.begin()->step = -1;
 		return FALSE;
