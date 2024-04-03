@@ -307,6 +307,13 @@ uint32 field::process() {
 			++it->step;
 		return pduel->message_buffer.size();
 	}
+	case PROCESSOR_MOVE_RULE: {
+		if (move_rule(it->step, (card*)it->ptarget))
+			core.units.pop_front();
+		else
+			++it->step;
+		return pduel->message_buffer.size();
+	}
 	case PROCESSOR_SENDTO: {
 		if (send_to(it->step, it->ptarget, it->peffect, it->arg1, it->arg2, it->arg3))
 			core.units.pop_front();
@@ -2180,12 +2187,14 @@ int32 field::process_idle_command(uint16 step) {
 			if(pcard && ((pcard->current.sequence!=5 && pcard->current.sequence!=2)))
 				core.repositionable_cards.push_back(pcard);
 		}
+		core.parallelmoveable_cards.clear();
 		eset.clear();
 		filter_field_effect(EFFECT_CANMOVE_PARALLEL, &eset);
 		for(int32 i = 0; i < eset.size(); ++i) {
 			card* pcard = eset[i]->get_handler();
 			if(pcard->current.controler == infos.turn_player )
 				core.repositionable_cards.push_back(pcard);
+				core.parallelmoveable_cards.push_back(pcard);
 		}
 		core.msetable_cards.clear();
 		core.ssetable_cards.clear();
@@ -2300,22 +2309,7 @@ int32 field::process_idle_command(uint16 step) {
 	}
 	case 7: {
 		card* target = core.repositionable_cards[returns.ivalue[0] >> 16];
-		int con = target->current.controler;
-		int seq = target->current.sequence;
-		int arr = 0;
-		duel* pduel = target->pduel;
-		if (seq == 0) arr++;
-		else if (seq == 3) arr = 4;
-		else if (seq == 4) arr = 3;
-		if(!player[infos.turn_player].list_mzone[arr])
-			move_card(infos.turn_player,target,LOCATION_MZONE,arr);
-		else
-		{
-			pduel->game_field->swap_card(target, player[infos.turn_player].list_mzone[arr]);
-			field::card_set swapped;
-			swapped.insert(target);
-			swapped.insert(player[infos.turn_player].list_mzone[arr]);
-		}
+		add_process(PROCESSOR_MOVE_RULE,0, 0,(group*)target,infos.turn_player,0);
 		core.units.begin()->step = -1;
 		return FALSE;
 	}

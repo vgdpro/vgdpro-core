@@ -198,6 +198,7 @@ struct processor {
 	card_vector summonable_cards;
 	card_vector spsummonable_cards;
 	card_vector repositionable_cards;
+	card_vector parallelmoveable_cards;
 	card_vector msetable_cards;
 	card_vector ssetable_cards;
 	card_vector attackable_cards;
@@ -620,6 +621,7 @@ public:
 	int32 send_to(uint16 step, group* targets, effect* reason_effect, uint32 reason, uint8 reason_player, uint8 send_activating);
 	int32 discard_deck(uint16 step, uint8 playerid, uint8 count, uint32 reason);
 	int32 move_to_field(uint16 step, card* target, uint32 enable, uint32 ret, uint32 pzone, uint32 zone);
+	int32 move_rule(uint16 step, card* target);
 	int32 change_position(uint16 step, group* targets, effect* reason_effect, uint8 reason_player, uint32 enable);
 	int32 operation_replace(uint16 step, effect* replace_effect, group* targets, card* target, int32 is_destroy);
 	int32 activate_effect(uint16 step, effect* peffect);
@@ -789,6 +791,7 @@ public:
 #define PROCESSOR_EQUIP				73
 #define PROCESSOR_GET_CONTROL		74
 #define PROCESSOR_SWAP_CONTROL		75
+#define PROCESSOR_MOVE_RULE		    76
 //#define PROCESSOR_CONTROL_ADJUST	76
 #define PROCESSOR_SELF_DESTROY		77
 #define PROCESSOR_TRAP_MONSTER_ADJUST	78

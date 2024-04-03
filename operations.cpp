@@ -4554,6 +4554,67 @@ int32 field::discard_deck(uint16 step, uint8 playerid, uint8 count, uint32 reaso
 	}
 	return TRUE;
 }
+int32 field::move_rule(uint16 step, card* target){
+	switch (step)
+	{
+	case 0:{
+		int con = target->current.controler;
+		int seq = target->current.sequence;
+		int arr = 0;
+		duel* pduel = target->pduel;
+		uint32 flag = player[con].disabled_location;
+		uint32 finalflag = 0;
+		bool canparallel = std::find(core.parallelmoveable_cards.begin(),core.parallelmoveable_cards.end(),target)!=core.parallelmoveable_cards.end();
+		switch (seq)
+		{
+		case 0:{
+			finalflag=finalflag|(1<<(seq+1));
+			break;
+		}
+		case 1:{
+			finalflag=finalflag|(1<<(seq-1));
+			if(canparallel){
+				finalflag=finalflag|(1<<(seq+1));
+			}
+			break;
+		}
+		case 2:{
+			if(canparallel){
+				finalflag=finalflag|(1<<(seq-1));
+				finalflag=finalflag|(1<<(seq+1));
+			}
+			break;
+		}
+		case 3:{
+			finalflag=finalflag|(1<<(seq+1));
+			if(canparallel){
+				finalflag=finalflag|(1<<(seq-1));
+			}
+			break;
+		}
+		case 4:{
+			finalflag=finalflag|(1<<(seq-1));
+			break;
+		}
+		}
+		flag = ~flag & 0x1f;
+		finalflag = flag & finalflag;
+		add_process(PROCESSOR_SELECT_PLACE, 0, 0, 0, con, ~finalflag, 1);
+		return false;
+	}
+	case 1:{
+		int seq =returns.bvalue[2];
+		if(player[infos.turn_player].list_mzone[seq]){
+			pduel->game_field->swap_card(target, player[infos.turn_player].list_mzone[seq]);
+		}
+		else{
+			move_card(infos.turn_player,target,LOCATION_MZONE,seq);
+		}
+		return false;
+	}
+	}
+	return TRUE;
+}
 // move a card from anywhere to field, including sp_summon, Duel.MoveToField(), Duel.ReturnToField()
 // ret: 0 = default, 1 = return after temporarily banished, 2 = trap_monster return to LOCATION_SZONE
 // call move_card() in step 2
