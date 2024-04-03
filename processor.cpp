@@ -2177,8 +2177,14 @@ int32 field::process_idle_command(uint16 step) {
 		}
 		core.repositionable_cards.clear();
 		for(auto& pcard : player[infos.turn_player].list_mzone) {
-			if(pcard && ((pcard->is_position(POS_FACEUP | POS_FACEDOWN_ATTACK) && pcard->is_capable_change_position(infos.turn_player))
-		        || (pcard->is_position(POS_FACEDOWN) && pcard->is_can_be_flip_summoned(infos.turn_player))))
+			if(pcard && ((pcard->current.sequence!=5 && pcard->current.sequence!=2)))
+				core.repositionable_cards.push_back(pcard);
+		}
+		eset.clear();
+		filter_field_effect(EFFECT_CANMOVE_PARALLEL, &eset);
+		for(int32 i = 0; i < eset.size(); ++i) {
+			card* pcard = eset[i]->get_handler();
+			if(pcard->current.controler == infos.turn_player )
 				core.repositionable_cards.push_back(pcard);
 		}
 		core.msetable_cards.clear();
@@ -2294,30 +2300,12 @@ int32 field::process_idle_command(uint16 step) {
 	}
 	case 7: {
 		card* target = core.repositionable_cards[returns.ivalue[0] >> 16];
-		if(target->is_position(POS_FACEUP_ATTACK)) {
-			core.phase_action = TRUE;
-			change_position(target, 0, infos.turn_player, POS_FACEUP_DEFENSE, FALSE);
-			adjust_all();
-			add_process(PROCESSOR_POINT_EVENT, 0, 0, 0, FALSE, 0);
-		} else if(target->is_position(POS_FACEUP_DEFENSE)) {
-			core.phase_action = TRUE;
-			change_position(target, 0, infos.turn_player, POS_FACEUP_ATTACK, FALSE);
-			adjust_all();
-			add_process(PROCESSOR_POINT_EVENT, 0, 0, 0, FALSE, 0);
-		} else if(target->is_position(POS_FACEDOWN_ATTACK)) {
-			//deprecated rule (POS_FACEDOWN_ATTACK)
-			core.units.begin()->ptarget = (group*)target;
-			int32 positions = 0;
-			if(target->is_capable_change_position(infos.turn_player))
-				positions |= POS_FACEDOWN_DEFENSE;
-			if(target->is_can_be_flip_summoned(infos.turn_player))
-				positions |= POS_FACEUP_ATTACK;
-			add_process(PROCESSOR_SELECT_POSITION, 0, 0, 0, infos.turn_player + (positions << 16), target->data.code);
-			core.units.begin()->step = 12;
-			return FALSE;
-		} else
-			add_process(PROCESSOR_FLIP_SUMMON, 0, 0, (group*)target, target->current.controler, 0);
-		target->set_status(STATUS_FORM_CHANGED, TRUE);
+		int con = target->current.controler;
+		int seq = target->current.sequence;
+		if(!player[infos.turn_player].list_mzone[1])
+		{
+			move_card(infos.turn_player,target,LOCATION_MZONE,1);
+		}
 		core.units.begin()->step = -1;
 		return FALSE;
 	}

@@ -249,6 +249,7 @@ inline effect_flag operator|(effect_flag flag1, effect_flag flag2)
 #define EFFECT_SUMMON_PROC				32	//
 #define EFFECT_LIMIT_SUMMON_PROC		33	//
 #define EFFECT_SPSUMMON_PROC			34	//
+#define EFFECT_CANMOVE_PARALLEL		    97	//
 #define EFFECT_EXTRA_SET_COUNT			35	//
 #define EFFECT_SET_PROC					36	//
 #define EFFECT_LIMIT_SET_PROC			37	//
