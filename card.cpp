@@ -513,7 +513,7 @@ bool card::check_card_setcode(uint32 code, uint32 value) {
 	card_data dat;
 	::read_card(code, &dat);
 	return dat.is_setcode(value);
-}
+}/*
 uint32 card::get_country(uint32 country) {
 	uint32 code1 = get_code();
 	card_data dat1;
@@ -521,7 +521,7 @@ uint32 card::get_country(uint32 country) {
 		return code1.country;
 	}
 	return code1.country;
-}
+}*/
 int32 card::is_set_card(uint32 set_code) {
 	uint32 code1 = get_code();
 	card_data dat1;
@@ -2308,7 +2308,7 @@ int32 card::leave_field_redirect(uint32 reason) {
 	effect_set es;
 	uint32 redirect;
 	uint32 redirects = 0;
-	if(data.type & TYPE_TOKEN)
+	if(data.type & TYPE_TOKEN || (data.type & TYPE_TRAP)
 		return 0;
 	filter_effect(EFFECT_LEAVE_FIELD_REDIRECT, &es);
 	for(int32 i = 0; i < es.size(); ++i) {
