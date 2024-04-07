@@ -3364,6 +3364,11 @@ int32 field::special_summon(uint16 step, effect* reason_effect, uint8 reason_pla
 	}
 	case 3: {
 		pduel->write_buffer8(MSG_SPSUMMONED);
+		process_single_event();
+		process_instant_event();
+		return FALSE;
+	}
+	case 4: {
 		for(auto& pcard : targets->container) {
 			check_card_counter(pcard, ACTIVITY_SPSUMMON, pcard->summon_player);
 			pcard->set_special_summon_status(pcard->current.reason_effect);
@@ -3381,16 +3386,12 @@ int32 field::special_summon(uint16 step, effect* reason_effect, uint8 reason_pla
 					matreason = REASON_XYZ;
 				else if(summontype == SUMMON_TYPE_LINK)
 					matreason = REASON_LINK;
-				for(auto& mcard : pcard->material_cards)
+				for(auto& mcard : pcard->material_cards){
 					raise_single_event(mcard, &targets->container, EVENT_BE_MATERIAL, pcard->current.reason_effect, matreason, pcard->current.reason_player, pcard->summon_player, 0);
+				}
 				raise_event(&(pcard->material_cards), EVENT_BE_MATERIAL, reason_effect, matreason, reason_player, pcard->summon_player, 0);
 			}
 		}
-		process_single_event();
-		process_instant_event();
-		return FALSE;
-	}
-	case 4: {
 		raise_event(&targets->container, EVENT_SPSUMMON_SUCCESS, reason_effect, 0, reason_player, PLAYER_NONE, 0);
 		process_instant_event();
 		return FALSE;
