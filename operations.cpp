@@ -4048,6 +4048,12 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 				pcard->sendto_param.location = redirect;
 				pcard->sendto_param.sequence = redirect_seq;
 			}
+			if(pcard->sendto_param.location & LOCATION_GRAVE && pcard->current.type & TYPE_TRAP){
+				pcard->sendto_param.playerid = PLAYER_NONE;
+				pcard->sendto_param.location = 0;
+				pcard->sendto_param.sequence = 0;
+				pcard->sendto_param.position = POS_FACEUP;
+			}
 			if(check_cb)
 				pcard->sendto_param.playerid |= 0x1u << 4;
 		}
