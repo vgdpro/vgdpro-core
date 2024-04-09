@@ -4919,8 +4919,7 @@ int32 field::change_position(uint16 step, group * targets, effect * reason_effec
 			card* pcard = *cit;
 			uint8 npos = pcard->position_param & 0xff;
 			uint8 opos = pcard->current.position;
-			if ((pcard->current.location != LOCATION_MZONE && pcard->current.location != LOCATION_SZONE)
-				|| (pcard->data.type & TYPE_LINK)
+			if ((pcard->data.type & TYPE_LINK)
 				|| pcard->get_status(STATUS_SUMMONING | STATUS_SPSUMMON_STEP)
 				|| !pcard->is_affect_by_effect(reason_effect) || npos == opos
 				|| (!(pcard->data.type & TYPE_TOKEN) && (opos & POS_FACEUP) && (npos & POS_FACEDOWN) && !pcard->is_capable_turn_set(reason_player))
