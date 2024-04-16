@@ -3348,7 +3348,7 @@ void field::calculate_battle_damage(effect** pdamchange, card** preason_card, ui
 	if(core.attacker->is_position(POS_FACEUP_DEFENSE)) {
 		effect* defattack = core.attacker->is_affected_by_effect(EFFECT_DEFENSE_ATTACK);
 		if(defattack && defattack->get_value(core.attacker))
-			attacker_value = ad;
+			attacker_value = aa;
 	}
 	if(core.attack_target) {
 		da = core.attack_target->get_battle_attack();
@@ -4224,6 +4224,7 @@ int32 field::add_chain(uint16 step) {
 		process_instant_event();
 		if(core.new_chains.size())
 			add_process(PROCESSOR_ADD_CHAIN, 0, 0, 0, 0, 0);
+		add_process(PROCESSOR_SOLVE_CHAIN, 0, 0, 0, FALSE, 0);
 		adjust_all();
 		return TRUE;
 	}
