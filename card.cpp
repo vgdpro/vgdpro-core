@@ -1200,8 +1200,8 @@ uint32 card::get_grave_attribute(uint8 playerid) {
 uint32 card::get_race() {
 	if(assume_type == ASSUME_RACE)
 		return assume_value;
-	if(!(data.type & TYPE_MONSTER) && !(get_type() & TYPE_MONSTER) && !is_affected_by_effect(EFFECT_PRE_MONSTER))
-		return 0;
+	/*if(!(data.type & TYPE_MONSTER) && !(get_type() & TYPE_MONSTER) && !is_affected_by_effect(EFFECT_PRE_MONSTER))
+		return 0;*/
 	if (temp.race != 0xffffffff)
 		return temp.race;
 	effect_set effects;
