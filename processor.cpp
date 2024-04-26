@@ -3345,11 +3345,11 @@ void field::calculate_battle_damage(effect** pdamchange, card** preason_card, ui
 	uint8 bd[2] = {FALSE, FALSE};
 	bool pierce = false;
 	core.battle_damage[0] = core.battle_damage[1] = 0;
-	if(core.attacker->is_position(POS_FACEUP_DEFENSE)) {
-		effect* defattack = core.attacker->is_affected_by_effect(EFFECT_DEFENSE_ATTACK);
-		if(defattack && defattack->get_value(core.attacker))
-			attacker_value = aa;
-	}
+	// if(core.attacker->is_position(POS_FACEUP_DEFENSE)) {
+	// 	effect* defattack = core.attacker->is_affected_by_effect(EFFECT_DEFENSE_ATTACK);
+	// 	if(defattack && defattack->get_value(core.attacker))
+	// 		attacker_value = aa;
+	// }
 	if(core.attack_target) {
 		da = core.attack_target->get_battle_attack();
 		dd = core.attack_target->get_battle_defense();
