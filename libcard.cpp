@@ -29,7 +29,8 @@ int32 scriptlib::card_get_origin_code(lua_State *L) {
 	check_param(L, PARAM_TYPE_CARD, 1);
 	card* pcard = *(card**) lua_touserdata(L, 1);
 	lua_pushinteger(L, pcard->get_original_code());
-	return 1;
+	lua_pushinteger(L, pcard-> data.code);
+	return 2;
 }
 int32 scriptlib::card_get_origin_code_rule(lua_State *L) {
 	check_param_count(L, 1);
