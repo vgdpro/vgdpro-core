@@ -3387,7 +3387,7 @@ int32 field::special_summon(uint16 step, effect* reason_effect, uint8 reason_pla
 				raise_event(&(pcard->material_cards), EVENT_BE_MATERIAL, reason_effect, matreason, reason_player, pcard->summon_player, 0);
 			}
 		}
-		raise_event(&targets->container, EVENT_SPSUMMON_SUCCESS, reason_effect, 0, reason_player, PLAYER_NONE, 0);
+		//raise_event(&targets->container, EVENT_SPSUMMON_SUCCESS, reason_effect, 0, reason_player, PLAYER_NONE, 0);
 		process_single_event();
 		process_instant_event();
 		return FALSE;
@@ -3417,6 +3417,7 @@ int32 field::special_summon(uint16 step, effect* reason_effect, uint8 reason_pla
 			//}
 		}
 		raise_event(&targets->container, EVENT_SPSUMMON_SUCCESS, reason_effect, 0, reason_player, PLAYER_NONE, 0);
+		process_single_event();
 		process_instant_event();
 		return FALSE;
 	}
