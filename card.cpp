@@ -1012,9 +1012,9 @@ int32 card::get_battle_defense() {
 		return get_atk_def().second;
 }
 uint32 card::get_level() {
-	if((data.type & (TYPE_XYZ | TYPE_LINK)) || (status & STATUS_NO_LEVEL)
+	/*if ((data.type & (TYPE_XYZ | TYPE_LINK)) || (status & STATUS_NO_LEVEL)
 	        || (!(data.type & TYPE_MONSTER) && !(get_type() & TYPE_MONSTER) && !is_affected_by_effect(EFFECT_PRE_MONSTER)))
-		return 0;
+		return 0;*/
 	if(assume_type == ASSUME_LEVEL)
 		return assume_value;
 	if (temp.level != 0xffffffff)
@@ -4217,6 +4217,10 @@ int32 card::is_can_be_xyz_material(card* scard) {
 	filter_effect(EFFECT_CANNOT_BE_XYZ_MATERIAL, &eset);
 	for(int32 i = 0; i < eset.size(); ++i)
 		if(eset[i]->get_value(scard))
+			return FALSE;
+	filter_effect(EFFECT_MATERIAL_LIMIT, &eset);
+	for (int32 i = 0; i < eset.size(); ++i)
+		if (eset[i]->get_value(scard))
 			return FALSE;
 	return TRUE;
 }
