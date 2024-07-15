@@ -4224,8 +4224,10 @@ int32 field::add_chain(uint16 step) {
 		process_instant_event();
 		if(core.new_chains.size())
 			add_process(PROCESSOR_ADD_CHAIN, 0, 0, 0, 0, 0);
-		add_process(PROCESSOR_SOLVE_CHAIN, 0, 0, 0, FALSE, 0);
+		
+		//add_process(PROCESSOR_SOLVE_CHAIN, 0, 0, 0, FALSE, 0);
 		adjust_all();
+		add_process(PROCESSOR_ACTIVATE_EFFECT, 1, peffect, 0, 0, 0);
 		return TRUE;
 	}
 	}
