@@ -2074,6 +2074,7 @@ int32 field::process_idle_command(uint16 step) {
 		if(infos.phase == PHASE_MAIN2 || is_player_affected_by_effect(infos.turn_player, EFFECT_CANNOT_BP))
 			core.to_bp = FALSE;
 		if(infos.phase == PHASE_MAIN1) {
+			add_process(PROCESSOR_PHASE_EVENT, 0, 0, 0, PHASE_MAIN1, 0);
 			for(auto& pcard : player[infos.turn_player].list_mzone) {
 				if(pcard && pcard->is_capable_attack() && pcard->is_affected_by_effect(EFFECT_MUST_ATTACK)) {
 					must_attack = true;
