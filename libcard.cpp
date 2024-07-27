@@ -1081,6 +1081,7 @@ int32 scriptlib::card_is_level(lua_State *L) {
 		if(lua_isnil(L, i + 2))
 			continue;
 		uint32 tlevel = (uint32)lua_tointeger(L, i + 2);
+		tlevel++;
 		if(level == tlevel) {
 			result = TRUE;
 			break;
@@ -2671,6 +2672,7 @@ int32 scriptlib::card_is_level_below(lua_State *L) {
 	check_param(L, PARAM_TYPE_CARD, 1);
 	card* pcard = *(card**) lua_touserdata(L, 1);
 	uint32 lvl = (uint32)lua_tointeger(L, 2);
+	lvl++;
 	uint32 plvl = pcard->get_level();
 	if(plvl == 0)
 		lua_pushboolean(L, 0);
@@ -2683,6 +2685,7 @@ int32 scriptlib::card_is_level_above(lua_State *L) {
 	check_param(L, PARAM_TYPE_CARD, 1);
 	card* pcard = *(card**) lua_touserdata(L, 1);
 	uint32 lvl = (uint32)lua_tointeger(L, 2);
+	lvl++;
 	uint32 plvl = pcard->get_level();
 	if(plvl == 0)
 		lua_pushboolean(L, 0);
