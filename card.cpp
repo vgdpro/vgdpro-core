@@ -1041,7 +1041,7 @@ uint32 card::get_level() {
 	if(level < 1 && (get_type() & TYPE_MONSTER))
 		level = 1;
 	temp.level = 0xffffffff;
-	return level;
+	return level-1;
 }
 uint32 card::get_rank() {
 	if(!(data.type & TYPE_XYZ) || (status & STATUS_NO_LEVEL))
