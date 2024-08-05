@@ -299,7 +299,7 @@ int32 scriptlib::card_get_level(lua_State *L) {
 	check_param_count(L, 1);
 	check_param(L, PARAM_TYPE_CARD, 1);
 	card* pcard = *(card**) lua_touserdata(L, 1);
-	lua_pushinteger(L, pcard->get_level());
+	lua_pushinteger(L, (pcard->get_level() - 1));
 	return 1;
 }
 int32 scriptlib::card_get_country(lua_State *L) {
