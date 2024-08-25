@@ -135,6 +135,16 @@ int32 scriptlib::duel_send_to(lua_State *L) {
 		return 1;
 	});
 }
+int32 scriptlib::duel_load_script(lua_State *L) {
+	check_param_count(L, 1);
+	check_param(L, PARAM_TYPE_STRING, 1);
+	duel* pduel = interpreter::get_duel_info(L); 
+	const char* pstr = lua_tostring(L, 1);
+	char filename[64];
+	sprintf(filename, "./script/%s", pstr);
+	lua_pushboolean(L, pduel->lua->load_script(filename));
+	return 1;
+}
 int32 scriptlib::duel_register_effect(lua_State *L) {
 	check_param_count(L, 2);
 	check_param(L, PARAM_TYPE_EFFECT, 1);
@@ -4841,6 +4851,7 @@ int32 scriptlib::duel_majestic_copy(lua_State *L) {
 }
 
 static const struct luaL_Reg duellib[] = {
+	{ "LoadScript", scriptlib::duel_load_script },
 	{ "EnableGlobalFlag", scriptlib::duel_enable_global_flag },
 	{ "Exile", scriptlib::duel_exile },
 	{ "Sendto", scriptlib::duel_send_to },

@@ -39,6 +39,7 @@ public:
 	static int32 card_is_special_summon_set_card(lua_State *L);
 	static int32 card_get_type(lua_State *L);
 	static int32 card_get_origin_type(lua_State *L);
+	static int32 duel_load_script(lua_State *L);
 	static int32 card_get_fusion_type(lua_State *L);
 	static int32 card_get_synchro_type(lua_State *L);
 	static int32 card_get_xyz_type(lua_State *L);
