@@ -22,8 +22,6 @@ public:
 	static int32 check_action_permission(lua_State* L);
 
 	//card lib
-	static int32 duel_read_card(lua_State *L);
-	static int32 duel_load_script(lua_State *L);
 	static int32 duel_exile(lua_State *L);
 	static int32 duel_send_to(lua_State *L);
 	static int32 card_get_code(lua_State *L);

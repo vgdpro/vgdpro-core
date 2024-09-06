@@ -135,83 +135,6 @@ int32 scriptlib::duel_send_to(lua_State *L) {
 		return 1;
 	});
 }
-int32 scriptlib::duel_load_script(lua_State *L) {
-	check_param_count(L, 1);
-	check_param(L, PARAM_TYPE_STRING, 1);
-	duel* pduel = interpreter::get_duel_info(L); 
-	const char* pstr = lua_tostring(L, 1);
-	char filename[64];
-	sprintf(filename, "./script/%s", pstr);
-	lua_pushboolean(L, pduel->lua->load_script(filename));
-	return 1;
-}
-int32 scriptlib::duel_read_card(lua_State *L) {
-	check_param_count(L, 2);
-	card_data dat;
-	if(check_param(L, PARAM_TYPE_CARD, 1, TRUE)) {
-		card* pcard = *(card**) lua_touserdata(L, 1);
-		dat = pcard->data;
-	} else {
-		int32 code = lua_tointeger(L, 1);
-		::read_card(code, &dat);
-	}
-	if(!dat.code)
-		return 0;
-	uint32 args = lua_gettop(L) - 1;
-	for(uint32 i = 0; i < args; ++i) {
-		int32 flag = lua_tointeger(L, 2 + i);
-		switch(flag) {
-		case CARDDATA_CODE:
-			lua_pushinteger(L, dat.code);
-			break;
-		case CARDDATA_ALIAS:
-			lua_pushinteger(L, dat.alias);
-			break;
-		case CARDDATA_SETCODE: {
-			unsigned long setcode = 0;
-			for (int i = 0;; ++i) {
-				uint16_t sc = dat.setcode[i];
-				if (!sc)
-					break;
-				setcode |= sc << (16 * i);
-			}
-			lua_pushinteger(L, setcode);
-			break;
-		}
-		case CARDDATA_TYPE:
-			lua_pushinteger(L, dat.type);
-			break;
-		case CARDDATA_LEVEL:
-			lua_pushinteger(L, dat.level);
-			break;
-		case CARDDATA_ATTRIBUTE:
-			lua_pushinteger(L, dat.attribute);
-			break;
-		case CARDDATA_RACE:
-			lua_pushinteger(L, dat.race);
-			break;
-		case CARDDATA_ATTACK:
-			lua_pushinteger(L, dat.attack);
-			break;
-		case CARDDATA_DEFENSE:
-			lua_pushinteger(L, dat.defense);
-			break;
-		case CARDDATA_LSCALE:
-			lua_pushinteger(L, dat.lscale);
-			break;
-		case CARDDATA_RSCALE:
-			lua_pushinteger(L, dat.rscale);
-			break;
-		case CARDDATA_LINK_MARKER:
-			lua_pushinteger(L, dat.link_marker);
-			break;
-		default:
-			lua_pushinteger(L, 0);
-			break;
-		}
-	}
-	return args;
-}
 int32 scriptlib::duel_register_effect(lua_State *L) {
 	check_param_count(L, 2);
 	check_param(L, PARAM_TYPE_EFFECT, 1);
@@ -4918,8 +4841,6 @@ int32 scriptlib::duel_majestic_copy(lua_State *L) {
 }
 
 static const struct luaL_Reg duellib[] = {
-	{ "ReadCard", scriptlib::duel_read_card },
-	{ "LoadScript", scriptlib::duel_load_script },
 	{ "EnableGlobalFlag", scriptlib::duel_enable_global_flag },
 	{ "Exile", scriptlib::duel_exile },
 	{ "Sendto", scriptlib::duel_send_to },
