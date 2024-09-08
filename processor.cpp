@@ -1385,7 +1385,7 @@ int32 field::process_point_event(int16 step, int32 skip_trigger, int32 skip_free
 				clit->set_triggering_state(phandler);
 			}
 			uint8 tp = clit->triggering_player;
-			if(check_nonpublic_trigger(*clit) && check_trigger_effect(*clit)
+			if(check_trigger_effect(*clit)//check_nonpublic_trigger(*clit) && check_trigger_effect(*clit)
 				&& peffect->is_chainable(tp) && peffect->is_activateable(tp, clit->evt, TRUE)
 				&& check_spself_from_hand_trigger(*clit)) {
 				if(tp == core.current_player)
