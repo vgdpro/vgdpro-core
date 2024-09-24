@@ -1587,6 +1587,19 @@ int32 card::get_old_union_count() {
 	}
 	return count;
 }
+void card::xyz_overlay_special_summon(card* materials) {
+	materials->previous.controler = materials->current.controler;
+	materials->previous.location = materials->current.location;
+	materials->previous.sequence = materials->current.sequence;
+	materials->previous.position = materials->current.position;
+	materials->previous.pzone = materials->current.pzone;
+	pduel->game_field->player[materials->current.controler].list_mzone[5] = 0;
+	pduel->game_field->player[materials->current.controler].used_location &= ~(1 << 5);
+	pduel->game_field->player[materials->current.controler].list_mzone[4] = this;
+	pduel->game_field->player[materials->current.controler].used_location |= 1 << 4;
+	materials->current.controler = current.controler;
+	materials->current.sequence = 4;
+}
 void card::xyz_overlay(card_set* materials) {
 	if(materials->size() == 0)
 		return;

@@ -565,6 +565,7 @@ public:
 	static int32 duel_check_xyz_material(lua_State *L);
 	static int32 duel_select_xyz_material(lua_State *L);
 	static int32 duel_overlay(lua_State *L);
+	static int32 duel_overlay_special_summon(lua_State *L);
 	static int32 duel_get_overlay_group(lua_State *L);
 	static int32 duel_get_overlay_count(lua_State *L);
 	static int32 duel_check_remove_overlay_card(lua_State *L);

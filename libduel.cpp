@@ -3642,6 +3642,30 @@ int32 scriptlib::duel_select_xyz_material(lua_State *L) {
 	scard->pduel->game_field->add_process(PROCESSOR_SELECT_XMATERIAL, 0, 0, (group*)scard, playerid + (lv << 16), minc + (maxc << 16));
 	return lua_yield(L, 0);
 }
+int32 scriptlib::duel_overlay_special_summon(lua_State *L) {
+	check_action_permission(L);
+	check_param_count(L, 2);
+	check_param(L, PARAM_TYPE_CARD, 1);
+	card* target = *(card**) lua_touserdata(L, 1);
+	card* pcard = nullptr;
+	group* pgroup = nullptr;
+	if(check_param(L, PARAM_TYPE_CARD, 2, TRUE)) {
+		pcard = *(card**) lua_touserdata(L, 2);
+	} else if(check_param(L, PARAM_TYPE_GROUP, 2, TRUE)) {
+		pgroup = *(group**) lua_touserdata(L, 2);
+	} else
+		return luaL_error(L, "Parameter %d should be \"Card\" or \"Group\".", 2);
+	if(pcard) {
+		target->xyz_overlay_special_summon(pcard);
+	}
+	uint32 adjust = TRUE;
+	if(lua_gettop(L) > 2) {
+		adjust = lua_toboolean(L, 3);
+	}
+	if(adjust)
+		target->pduel->game_field->adjust_all();
+	return lua_yield(L, 0);
+}
 int32 scriptlib::duel_overlay(lua_State *L) {
 	check_action_permission(L);
 	check_param_count(L, 2);
@@ -5011,6 +5035,7 @@ static const struct luaL_Reg duellib[] = {
 	{ "CheckXyzMaterial", scriptlib::duel_check_xyz_material },
 	{ "SelectXyzMaterial", scriptlib::duel_select_xyz_material },
 	{ "Overlay", scriptlib::duel_overlay },
+	{ "OverlaySPSummon", scriptlib::duel_overlay_special_summon },
 	{ "GetOverlayGroup", scriptlib::duel_get_overlay_group },
 	{ "GetOverlayCount", scriptlib::duel_get_overlay_count },
 	{ "CheckRemoveOverlayCard", scriptlib::duel_check_remove_overlay_card },
