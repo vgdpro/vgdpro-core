@@ -44,6 +44,7 @@ public:
 	static int32 card_get_xyz_type(lua_State *L);
 	static int32 card_get_link_type(lua_State *L);
 	static int32 card_get_country(lua_State *L);
+	static int32 card_get_origin_country(lua_State *L);
 	static int32 card_get_level(lua_State *L);
 	static int32 card_get_rank(lua_State *L);
 	static int32 card_get_link(lua_State *L);

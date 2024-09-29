@@ -44,6 +44,7 @@ struct card_state {
 	uint8 sequence{ 0 };
 	uint8 position{ 0 };
 	uint32 reason{ 0 };
+	uint16 country{ 0 };
 	bool pzone{ false };
 	card* reason_card{ nullptr };
 	uint8 reason_player{ PLAYER_NONE };

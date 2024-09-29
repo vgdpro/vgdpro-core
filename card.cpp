@@ -517,8 +517,8 @@ bool card::check_card_setcode(uint32 code, uint32 value) {
 uint32 card::get_country() {
 	uint32 code1 = get_code();
 	card_data dat1;
-	if (code1 == data.code) {
-		return data.country;
+	if(temp.country != 0xffff){
+		return temp.country;
 	}
 	return data.country;
 }
