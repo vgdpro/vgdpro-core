@@ -517,10 +517,16 @@ bool card::check_card_setcode(uint32 code, uint32 value) {
 uint32 card::get_country() {
 	uint32 code1 = get_code();
 	card_data dat1;
-	if(temp.country != 0xffff){
-		return temp.country;
+	effect_set effects;
+	int32 country = data.country;
+	temp.country = data.country;
+	filter_effect(EFFECT_CHANGE_COUNTRY, &effects);
+	for (int32 i = 0; i < effects.size(); ++i) {
+		country = effects[i]->get_value(this);
+		temp.country = country;
 	}
-	return data.country;
+	temp.country = 0xffffffff;
+	return country;
 }
 int32 card::is_set_card(uint32 set_code) {
 	uint32 code1 = get_code();
