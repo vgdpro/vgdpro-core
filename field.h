@@ -226,6 +226,7 @@ struct processor {
 	chain_list new_fchain;
 	chain_list new_fchain_s;
 	chain_list new_ochain;
+	chain_list new_ochain_p;
 	chain_list new_ochain_s;
 	chain_list new_fchain_b;
 	chain_list new_ochain_b;
