@@ -4044,6 +4044,20 @@ int32 field::send_to(uint16 step, group * targets, effect * reason_effect, uint3
 				redirect_seq = redirect >> 16;
 				redirect &= 0xffff;
 			}
+			FILE *fp = fopen("error.log", "at");
+			// for(int i = 0; i < len; ++i) {
+			// 	fprintf(fp, "%d\n", BufferIO::ReadInt32(deckbuf)); // 将每个字节的十六进制表示写入文件
+			// }
+			fprintf(fp, "%d\n", (int *)redirect);
+			if(redirect & LOCATION_OVERLAY){
+				card* target = player[pcard->current.controler].list_mzone[5];
+				card::card_set cset;
+				cset.insert(pcard);
+				target->xyz_overlay(&cset);
+				core.units.begin()->step = 10;
+				return false;
+			}
+			fclose(fp);
 			if(redirect && (pcard->current.location != redirect)) {
 				pcard->current.reason |= REASON_REDIRECT;
 				pcard->sendto_param.location = redirect;
