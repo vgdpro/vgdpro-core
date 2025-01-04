@@ -1388,14 +1388,59 @@ int32 field::process_point_event(int16 step, int32 skip_trigger, int32 skip_free
 			if(check_trigger_effect(*clit)//check_nonpublic_trigger(*clit) && check_trigger_effect(*clit)
 				&& peffect->is_chainable(tp) && peffect->is_activateable(tp, clit->evt, TRUE)
 				&& check_spself_from_hand_trigger(*clit)) {
-				if(tp == core.current_player)
+				if(tp == core.current_player){
 					core.select_chains.push_back(*clit);
+					core.new_ochain_p.push_back(*clit);
+				}
 			} else {
 				peffect->active_type = 0;
 				clit = core.new_ochain_s.erase(clit);
 				continue;
 			}
 			++clit;
+		}
+		for (auto clit = core.new_ochain_p.begin(); clit != core.new_ochain_p.end(); ) {
+			effect* peffect = clit->triggering_effect;
+			card* phandler = peffect->get_handler();
+			if(phandler->is_has_relation(*clit)) //work around: position and control should be refreshed before raising event
+				clit->set_triggering_state(phandler);
+			if(!peffect->is_flag(EFFECT_FLAG_FIELD_ONLY) && (peffect->type & EFFECT_TYPE_FIELD)
+				&& (peffect->range & LOCATION_HAND) && phandler->current.location == LOCATION_HAND) {
+				if(!phandler->is_has_relation(*clit) && peffect->is_condition_check(phandler->current.controler, clit->evt))
+					phandler->create_relation(*clit);
+				peffect->set_activate_location();
+				clit->triggering_player = phandler->current.controler;
+				clit->set_triggering_state(phandler);
+			}
+			if(clit->triggering_player != phandler->current.controler && !peffect->is_flag(EFFECT_FLAG_EVENT_PLAYER)) {
+				clit->triggering_player = phandler->current.controler;
+				clit->set_triggering_state(phandler);
+			}
+			uint8 tp = clit->triggering_player;
+			if(peffect->is_chainable(tp) && peffect->is_activateable(tp, clit->evt, TRUE)
+				&& check_spself_from_hand_trigger(*clit)) {
+				if(tp == core.current_player){
+					core.select_chains.push_back(*clit);
+				}
+			} else {
+				peffect->active_type = 0;
+				clit = core.new_ochain_p.erase(clit);
+				continue;
+			}
+			++clit;
+		}
+		for (auto it = core.select_chains.begin(); it != core.select_chains.end(); ++it) {
+			auto inner_it = std::next(it); // 从当前元素的下一个开始检查
+			while (inner_it != core.select_chains.end()) {
+				if (inner_it->triggering_effect == it->triggering_effect &&
+					inner_it->evt.event_code == it->evt.event_code &&
+					inner_it->evt.event_value == it->evt.event_value) {
+					// 如果找到重复项，移除
+					inner_it = core.select_chains.erase(inner_it);
+				} else {
+					++inner_it;
+				}
+			}
 		}
 		if(core.select_chains.size() == 0) {
 			returns.ivalue[0] = -1;
@@ -1511,6 +1556,7 @@ int32 field::process_point_event(int16 step, int32 skip_trigger, int32 skip_free
 			reset_chain();
 			returns.ivalue[0] = FALSE;
 		}
+		core.new_ochain_p.clear();
 		return TRUE;
 	}
 	case 30: {
@@ -1896,6 +1942,7 @@ int32 field::process_instant_event() {
 			else
 				newchain.triggering_player = phandler->current.controler;
 			core.new_ochain.push_back(newchain);
+			
 			if(peffect->is_flag(EFFECT_FLAG_FIELD_ONLY)
 				|| !(peffect->range & LOCATION_HAND)
 				|| (peffect->range & phandler->current.location) && act)
