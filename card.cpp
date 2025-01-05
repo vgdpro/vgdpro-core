@@ -776,7 +776,7 @@ std::pair<int32, int32> card::get_atk_def() {
 	std::pair<int32, int32> ret(data.attack, 0);
 	if (!(data.type & TYPE_LINK))
 		ret.second = data.defense;
-	if (current.location != LOCATION_MZONE || get_status(STATUS_SUMMONING | STATUS_SPSUMMON_STEP))
+	if ((current.location != LOCATION_MZONE && current.location != LOCATION_GZONE) || get_status(STATUS_SUMMONING | STATUS_SPSUMMON_STEP))
 		return ret;
 	if (temp.attack != -1) {
 		ret.first = temp.attack;
