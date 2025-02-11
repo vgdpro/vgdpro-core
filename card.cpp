@@ -525,7 +525,7 @@ uint32 card::get_country() {
 		country = effects[i]->get_value(this);
 		temp.country = country;
 	}
-	temp.country = 0xffffffff;
+	temp.country = 0xffff;
 	return country;
 }
 int32 card::is_set_card(uint32 set_code) {
