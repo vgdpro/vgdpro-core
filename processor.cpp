@@ -1465,6 +1465,7 @@ int32 field::process_point_event(int16 step, int32 skip_trigger, int32 skip_free
 			for(const auto& ch : core.select_chains) {
 				ch.triggering_effect->active_type = 0;
 				core.new_ochain_s.remove_if([chain_id = ch.chain_id](chain ch) { return ch.chain_id == chain_id; });
+				core.new_ochain_p.remove_if([chain_id = ch.chain_id](chain ch) { return ch.chain_id == chain_id; });
 			}
 			if(core.new_ochain_s.size()) {
 				core.current_player = 1 - infos.turn_player;
@@ -1483,6 +1484,7 @@ int32 field::process_point_event(int16 step, int32 skip_trigger, int32 skip_free
 		core.new_chains.push_back(newchain);
 		add_process(PROCESSOR_ADD_CHAIN, 0, 0, 0, 0, 0);
 		core.new_ochain_s.remove_if([chain_id = newchain.chain_id](chain ch) { return ch.chain_id == chain_id; });
+		core.new_ochain_p.remove_if([chain_id = newchain.chain_id](chain ch) { return ch.chain_id == chain_id; });
 		core.new_ochain_h.remove_if([chain_id = newchain.chain_id](chain ch) { return ch.chain_id == chain_id; });
 		core.units.begin()->step = 3;
 		return FALSE;
@@ -2161,6 +2163,13 @@ int32 field::process_idle_command(uint16 step) {
 			effect* peffect = eit->second;
 			++eit;
 			peffect->set_activate_location();
+			FILE* fp = fopen("error.log", "at");
+			// for(int i = 0; i < len; ++i) {
+			// 	fprintf(fp, "%d\n", BufferIO::ReadInt32(deckbuf)); // 将每个字节的十六进制表示写入文件
+			// }
+			fprintf(fp, "%d\n",(int*)peffect->handler->get_code());
+			fprintf(fp, "%d\n",(int*)peffect->handler->current.location);
+			fclose(fp);
 			newchain.triggering_effect = peffect;
 			if(peffect->is_activateable(infos.turn_player, free_event))
 				core.select_chains.push_back(newchain);
@@ -2170,6 +2179,13 @@ int32 field::process_idle_command(uint16 step) {
 			effect* peffect = eit->second;
 			++eit;
 			peffect->set_activate_location();
+			FILE* fp = fopen("error.log", "at");
+			// for(int i = 0; i < len; ++i) {
+			// 	fprintf(fp, "%d\n", BufferIO::ReadInt32(deckbuf)); // 将每个字节的十六进制表示写入文件
+			// }
+			fprintf(fp, "%d\n",(int*)peffect->handler->get_code());
+			fprintf(fp, "%d\n",(int*)peffect->handler->current.location);
+			fclose(fp);
 			newchain.triggering_effect = peffect;
 			if(peffect->is_activateable(infos.turn_player, free_event))
 				core.select_chains.push_back(newchain);
