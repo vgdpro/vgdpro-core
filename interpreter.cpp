@@ -344,7 +344,10 @@ int32 interpreter::call_code_function(uint32 code, const char* f, uint32 param_c
 		params.clear();
 		return OPERATION_FAIL;
 	}
-	load_card_script(code);
+	if (code)
+		load_card_script(code);
+	else
+		lua_getglobal(current_state, "VgD");
 	luaL_checkstack(current_state, 1, nullptr);
 	lua_getfield(current_state, -1, f);
 	if (!lua_isfunction(current_state, -1)) {
