@@ -1706,7 +1706,7 @@ void card::xyz_add(card* mat) {
 		return;
 	xyz_materials.push_back(mat);
 	mat->overlay_target = this;
-	mat->current.controler = PLAYER_NONE;
+	mat->current.controler = current.controler;
 	mat->current.location = LOCATION_OVERLAY;
 	mat->current.sequence = (uint8)xyz_materials.size() - 1;
 	for(auto& eit : mat->xmaterial_effect) {
@@ -1723,7 +1723,7 @@ void card::xyz_remove(card* mat) {
 	mat->previous.location = mat->current.location;
 	mat->previous.sequence = mat->current.sequence;
 	mat->previous.pzone = mat->current.pzone;
-	mat->current.controler = PLAYER_NONE;
+	// mat->current.controler = PLAYER_NONE;
 	mat->current.location = 0;
 	mat->current.sequence = 0;
 	mat->overlay_target = 0;

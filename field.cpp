@@ -237,6 +237,13 @@ void field::add_card(uint8 playerid, card* pcard, uint16 location, uint8 sequenc
 	else
 		pcard->current.pzone = false;
 	pcard->apply_field_effect();
+	if(pcard->xyz_materials.size()>0){
+		for (size_t i = 0; i < pcard->xyz_materials.size(); i++)
+		{
+			pcard->xyz_materials[i]->apply_field_effect();
+		}
+		
+	}
 	pcard->fieldid = infos.field_id++;
 	pcard->fieldid_r = pcard->fieldid;
 	if(check_unique_onfield(pcard, pcard->current.controler, pcard->current.location))

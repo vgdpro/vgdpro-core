@@ -281,8 +281,8 @@ int32 effect::is_activateable(uint8 playerid, const tevent& e, int32 neglect_con
 				if((code < 1134 || code > 1136) && pduel->game_field->infos.phase == PHASE_DAMAGE_CAL && !is_flag(EFFECT_FLAG_DAMAGE_CAL))
 					return FALSE;
 			}
-			if(phandler->current.location == LOCATION_OVERLAY)
-				return FALSE;
+			// if(phandler->current.location == LOCATION_OVERLAY)
+			// 	return FALSE;
 			if(phandler->current.location == LOCATION_DECK
 				|| pduel->game_field->core.duel_rule >= 5 && phandler->current.location == LOCATION_EXTRA && (phandler->current.position & POS_FACEDOWN)) {
 				if((type & EFFECT_TYPE_SINGLE) && code != EVENT_TO_DECK)

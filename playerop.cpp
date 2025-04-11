@@ -120,9 +120,7 @@ int32 field::select_idle_command(uint16 step, uint8 playerid) {
 				pduel->write_buffer32(pcard->data.code);
 			else
 				pduel->write_buffer32(pcard->data.code | 0x80000000);
-			pduel->write_buffer8(pcard->current.controler);
-			pduel->write_buffer16(pcard->current.location);
-			pduel->write_buffer8(pcard->current.sequence);
+			pduel->write_buffer40(pcard->new_get_info_location());
 			pduel->write_buffer32(peffect->description);
 		}
 		//To BP
