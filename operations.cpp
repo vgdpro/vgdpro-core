@@ -4754,13 +4754,13 @@ int32 field::move_to_field(uint16 step, card* target, uint32 enable, uint32 ret,
 	}
 	case 1: {
 		uint32 seq = returns.bvalue[2];
-		if(location == LOCATION_SZONE && zone == 0x1 << 5 )//&& (target->data.type & TYPE_FIELD) && (target->data.type & TYPE_SPELL)
-		{
-			seq = 5;
-		}
-		else if(location == LOCATION_SZONE){
-			seq = 2;
-		}
+		// if(location == LOCATION_SZONE && zone == 0x1 << 5 )//&& (target->data.type & TYPE_FIELD) && (target->data.type & TYPE_SPELL)
+		// {
+		// 	seq = 5;
+		// }
+		// else if(location == LOCATION_SZONE){
+		// 	seq = 2;
+		// }
 		if(ret != 1) {
 			if(location != target->current.location) {
 				uint32 resetflag = 0;

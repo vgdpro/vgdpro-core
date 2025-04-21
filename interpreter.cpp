@@ -39,12 +39,12 @@ interpreter::interpreter(duel* pd): coroutines(256) {
 	scriptlib::open_duellib(lua_state);
 	scriptlib::open_debuglib(lua_state);
 	//extra scripts
-	// load_script("./script/constant.lua");
-	// load_script("./script/utility.lua");
-	// load_script("./script/procedure.lua");
-	load_script("./script/vgdefinition.lua");
-	load_script("./script/vgfuncLib.lua");
-	load_script("./script/vgd.lua");
+	load_script("./script/constant.lua");
+	load_script("./script/utility.lua");
+	load_script("./script/procedure.lua");
+	// load_script("./script/vgdefinition.lua");
+	// load_script("./script/vgfuncLib.lua");
+	// load_script("./script/vgd.lua");
 }
 interpreter::~interpreter() {
 	lua_close(lua_state);
@@ -106,24 +106,6 @@ void interpreter::unregister_effect(effect *peffect) {
 		luaL_unref(lua_state, LUA_REGISTRYINDEX, peffect->value);
 	luaL_unref(lua_state, LUA_REGISTRYINDEX, peffect->ref_handle);
 	peffect->ref_handle = 0;
-}
-int32 interpreter::is_effect_check(lua_State* L, effect* peffect, int32 findex, int32 extraargs) {
-	if (!findex || lua_isnil(L, findex))
-		return TRUE;
-	luaL_checkstack(L, 1 + extraargs, nullptr);
-	lua_pushvalue(L, findex);
-	interpreter::effect2value(L, peffect);
-	for (int32 i = 0; i < extraargs; ++i)
-		lua_pushvalue(L, (int32)(-extraargs - 2));
-	if (lua_pcall(L, 1 + extraargs, 1, 0)) {
-		sprintf(pduel->strbuffer, "%s", lua_tostring(L, -1));
-		handle_message(pduel, 1);
-		lua_pop(L, 1);
-		return OPERATION_FAIL;
-	}
-	int32 result = lua_toboolean(L, -1);
-	lua_pop(L, 1);
-	return result;
 }
 void interpreter::register_group(group *pgroup) {
 	if (!pgroup)
@@ -362,10 +344,7 @@ int32 interpreter::call_code_function(uint32 code, const char* f, uint32 param_c
 		params.clear();
 		return OPERATION_FAIL;
 	}
-	if (code)
-		load_card_script(code);
-	else
-		lua_getglobal(current_state, "VgD");
+	load_card_script(code);
 	luaL_checkstack(current_state, 1, nullptr);
 	lua_getfield(current_state, -1, f);
 	if (!lua_isfunction(current_state, -1)) {

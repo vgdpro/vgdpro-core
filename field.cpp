@@ -874,12 +874,12 @@ int32 field::get_useable_count_other(card* pcard, uint8 playerid, uint16 locatio
 	else
 	{
 		limit = get_szone_limit(playerid, uplayer, reason);
-		if(limit == 5){
-			count =1;
-		}
-		else{
-			count =0;
-		}
+		// if(limit == 5){
+		// 	count =1;
+		// }
+		// else{
+		// 	count =0;
+		// }
 	}
 	return count;
 }
