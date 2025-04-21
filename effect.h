@@ -62,6 +62,7 @@ public:
 	int32 value{ 0 };
 	int32 operation{ 0 };
 	uint8 cost_checked{ FALSE };
+	uint8 is_granted{ 0 };
 
 	explicit effect(duel* pd);
 	~effect() = default;

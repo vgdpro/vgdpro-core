@@ -428,4 +428,11 @@ struct card_sort {
 #define ACTIVITY_BATTLE_PHASE	6
 #define ACTIVITY_CHAIN			7
 
+//get effects for Card.GetCardRegistered
+#define GETEFFECT_INITIAL	0x1
+#define GETEFFECT_GAIN		0x2
+#define GETEFFECT_COPY		0x4
+#define GETEFFECT_GRANT		0x8
+#define GETEFFECT_ALL		0xf
+
 #endif /* COMMON_H_ */

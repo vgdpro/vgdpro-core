@@ -107,6 +107,24 @@ void interpreter::unregister_effect(effect *peffect) {
 	luaL_unref(lua_state, LUA_REGISTRYINDEX, peffect->ref_handle);
 	peffect->ref_handle = 0;
 }
+int32 interpreter::is_effect_check(lua_State* L, effect* peffect, int32 findex, int32 extraargs) {
+	if (!findex || lua_isnil(L, findex))
+		return TRUE;
+	luaL_checkstack(L, 1 + extraargs, nullptr);
+	lua_pushvalue(L, findex);
+	interpreter::effect2value(L, peffect);
+	for (int32 i = 0; i < extraargs; ++i)
+		lua_pushvalue(L, (int32)(-extraargs - 2));
+	if (lua_pcall(L, 1 + extraargs, 1, 0)) {
+		sprintf(pduel->strbuffer, "%s", lua_tostring(L, -1));
+		handle_message(pduel, 1);
+		lua_pop(L, 1);
+		return OPERATION_FAIL;
+	}
+	int32 result = lua_toboolean(L, -1);
+	lua_pop(L, 1);
+	return result;
+}
 void interpreter::register_group(group *pgroup) {
 	if (!pgroup)
 		return;

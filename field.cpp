@@ -2533,6 +2533,7 @@ int32 field::adjust_grant_effect() {
 			effect* geffect = (effect*)peffect->get_label_object();
 			effect* ceffect = geffect->clone();
 			ceffect->owner = pcard;
+			ceffect->is_granted = 1;
 			pcard->add_effect(ceffect);
 			eit.second.emplace(pcard, ceffect);
 		}
