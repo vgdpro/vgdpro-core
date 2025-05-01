@@ -32,12 +32,12 @@ int32 scriptlib::card_get_card_registered(lua_State *L) {
 	int32 extraargs = lua_gettop(L) - 3;
 	for(auto& eit : pcard->single_effect) {
 		if(pduel->lua->is_effect_check(L, eit.second, 2, extraargs)) {
-			eset.push_back(eit.second);
+			eset.add_item(eit.second);
 		}
 	}
 	for(auto& eit : pcard->field_effect) {
 		if(pduel->lua->is_effect_check(L, eit.second, 2, extraargs)) {
-			eset.push_back(eit.second);
+			eset.add_item(eit.second);
 		}
 	}
 	int size = 0;
