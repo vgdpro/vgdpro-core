@@ -4651,6 +4651,36 @@ int32 scriptlib::duel_check_chain_uniqueness(lua_State *L) {
 		lua_pushboolean(L, 0);
 	return 1;
 }
+int32 scriptlib::duel_add_field_counter(lua_State *L){
+	duel* pduel = interpreter::get_duel_info(L);
+	check_param_count(L, 4);
+	int32 playerid = (int32)lua_tointeger(L, 1);
+	uint32 countertype = (uint32)lua_tointeger(L, 2);
+	uint32 count = (uint32)lua_tointeger(L, 3);
+	uint32 seq = (uint32)lua_tointeger(L, 4);
+	uint8 singly = FALSE;
+	if(lua_gettop(L) > 4)
+		singly = lua_toboolean(L, 5);
+	pduel->game_field->add_field_counter(playerid, pduel->game_field->core.reason_player,seq , countertype, count, singly);
+	return 1;
+}
+int32 scriptlib::duel_remove_field_counter(lua_State *L){
+	duel* pduel = interpreter::get_duel_info(L);
+	check_param_count(L, 4);
+	int32 playerid = (int32) lua_tointeger(L, 1);
+	uint32 countertype = (uint32)lua_tointeger(L, 2);
+	uint32 count = (uint32)lua_tointeger(L, 3);
+	uint32 reason = (uint32)lua_tointeger(L, 4);
+	uint32 zone = -1;
+	if(lua_gettop(L) > 4)
+		zone = lua_toboolean(L, 5);
+	pduel->game_field->remove_field_counter(playerid, pduel->game_field->core.reason_player,zone, countertype, count , reason);
+	return lua_yieldk(L, 0, (lua_KContext)pduel, [](lua_State *L, int32 status, lua_KContext ctx) {
+		duel* pduel = (duel*)ctx;
+		lua_pushboolean(L, pduel->game_field->returns.ivalue[0]);
+		return 1;
+	});
+}
 int32 scriptlib::duel_get_activity_count(lua_State *L) {
 	check_param_count(L, 2);
 	int32 playerid = (int32)lua_tointeger(L, 1);
@@ -5095,6 +5125,8 @@ static const struct luaL_Reg duellib[] = {
 	{ "IsAbleToEnterBP", scriptlib::duel_is_able_to_enter_bp },
 	{ "SwapDeckAndGrave", scriptlib::duel_swap_deck_and_grave },
 	{ "MajesticCopy", scriptlib::duel_majestic_copy },
+	{ "AddFieldCounter", scriptlib::duel_add_field_counter },
+	{ "RemoveFieldCounter", scriptlib::duel_remove_field_counter },
 	{ NULL, NULL }
 };
 void scriptlib::open_duellib(lua_State *L) {

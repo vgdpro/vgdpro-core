@@ -511,6 +511,22 @@ uint32 field::process() {
 			++it->step;
 		return pduel->message_buffer.size();
 	}
+	case PROCESSOR_REMOVE_FIELD_COUNTER: {
+		if (remove_field_counter(it->step, it->arg1, (it->arg2 >> 24) & 0xff, (it->arg2 >> 16) & 0xff, it->arg2 & 0xffff, it->arg3, it->arg4)) {
+			core.units.pop_front();
+		} else
+			++it->step;
+		return pduel->message_buffer.size();
+	}
+	case PROCESSOR_SELECT_FIELD_COUNTER: {
+		if (select_field_counter(it->step, it->arg1, it->arg2, it->arg3, it->arg4)) {
+			core.units.pop_front();
+			return pduel->message_buffer.size();
+		} else {
+			it->step = 1;
+			return PROCESSOR_WAITING | pduel->message_buffer.size();
+		}
+	}
 	case PROCESSOR_ATTACK_DISABLE: {
 		if(it->step == 0) {
 			card* attacker = core.attacker;

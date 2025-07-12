@@ -611,6 +611,90 @@ int32 field::select_counter(uint16 step, uint8 playerid, uint16 countertype, uin
 	}
 	return TRUE;
 }
+int32 field::select_field_counter(uint16 step, uint8 playerid, uint16 countertype, uint16 count, uint32 zone) {
+	if(step == 0) {
+		if(count == 0)
+			return TRUE;
+		uint8 fp = playerid;
+		uint32 total = 0;
+		uint8 avail =0;
+		std::vector<int> field_counters(pduel->game_field->player[0].list_mzone.size()+pduel->game_field->player[0].list_mzone.size(), 0);
+		core.select_cards.clear();
+		size_t index = 0;
+		for(auto& counter_map : player[0].list_field_counters) {
+			if(!counter_map.empty() && get_field_counters(counter_map, countertype,playerid)) {
+				total += get_field_counters(counter_map, countertype,playerid);
+				field_counters[index] = get_field_counters(counter_map, countertype,playerid);
+				avail++;
+			}
+			index++;
+		}
+		index = 0; 
+		for(auto& counter_map : player[1].list_field_counters) {
+			if(!counter_map.empty() && get_field_counters(counter_map, countertype,playerid)) {
+				total += get_field_counters(counter_map, countertype,playerid);
+				field_counters[index+pduel->game_field->player[0].list_mzone.size()] = get_field_counters(counter_map, countertype,playerid);
+				avail++;
+			}
+			index++;
+		}
+		if(count > total) {
+			pduel->write_buffer8(MSG_RETRY);
+			return FALSE;
+		}
+		pduel->write_buffer8(MSG_SELECT_FIELD_COUNTER);
+		pduel->write_buffer8(playerid);
+		pduel->write_buffer16(countertype);
+		pduel->write_buffer16(count);
+		pduel->write_buffer8(avail);
+		index =0;
+		for(auto& field_counters : field_counters) {
+			if(field_counters > 0) {
+				pduel->write_buffer8(index);
+				pduel->write_buffer16(field_counters);
+			}
+			index++;
+		}
+		return FALSE;
+	} else {
+		uint16 total_removed = 0;
+		for (uint32 i = 0; i < SIZE_RETURN_VALUE; i+=2) {
+			int count = returns.svalue[i++] & 0xff; // count of counters
+			if(count >= 16)
+				break;
+			
+			uint8 controler = (returns.svalue[i] >> 8) & 0xf;  
+			uint8 sequence  = returns.svalue[i] & 0xf;         
+			uint16 opParam  = returns.svalue[i++]; 
+
+			if (controler > 1 || sequence >= pduel->game_field->player[controler].list_mzone.size()) {
+				pduel->write_buffer8(MSG_RETRY);
+				return FALSE;
+			}
+
+			auto& counter_map = pduel->game_field->player[controler].list_field_counters[sequence];
+
+			bool found = false;
+			uint16 cttype_to_find = (countertype & 0x7FFF) | (playerid << 15);
+			auto it = counter_map.find(cttype_to_find);
+			if (it != counter_map.end() && (it->second[0] + it->second[1]) >= opParam) {
+				found = true;
+			}
+
+			if (!found) {
+				pduel->write_buffer8(MSG_RETRY);
+				return FALSE;
+			}
+
+			total_removed += opParam;
+		}
+		if (total_removed != count) {
+			pduel->write_buffer8(MSG_RETRY);
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
 static int32 select_sum_check1(const int32* oparam, int32 size, int32 index, int32 acc, int32 opmin) {
 	if(acc == 0 || index == size)
 		return FALSE;

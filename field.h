@@ -77,6 +77,7 @@ struct chain {
 
 struct player_info {
 	using card_vector = std::vector<card*>;
+	using counter_map = std::map<uint16, std::array<uint16, 2>>;
 	int32 lp{ 0 };
 	int32 start_count{ 0 };
 	int32 draw_count{ 0 };
@@ -84,6 +85,7 @@ struct player_info {
 	uint32 disabled_location{ 0 };
 	uint32 extra_p_count{ 0 };
 	uint32 tag_extra_p_count{ 0 };
+	std::vector<counter_map> list_field_counters;
 	card_vector list_mzone;
 	card_vector list_szone;
 	card_vector list_main;
@@ -375,6 +377,7 @@ public:
 	using instant_f_list = std::map<effect*, chain>;
 	using chain_array = std::vector<chain>;
 	using processor_list = std::list<processor_unit>;
+	using counter_map = std::map<uint16, std::array<uint16, 2>>;
 
 	duel* pduel;
 	player_info player[2];
@@ -412,6 +415,10 @@ public:
 	uint32 get_linked_zone(int32 playerid);
 	uint32 get_rule_zone_fromex(int32 playerid, card* pcard);
 	void filter_must_use_mzone(uint8 playerid, uint8 uplayer, uint32 reason, card* pcard, uint32* flag);
+	uint32 get_field_counter_num(uint32 zone, uint16 countertype, uint8 playerid);
+	uint32 get_field_counters(counter_map counter_map, uint16 countertype, uint8 playerid);
+	void add_field_counter(uint8 playerid, uint8 uplayer, uint8 seq, uint16 countertype, uint16 count, uint8 singly);
+	void remove_field_counters(uint16 countertype, uint16 count, uint8 uplayer, uint8 playerid , int32 sequence);
 	void get_linked_cards(uint8 self, uint8 s, uint8 o, card_set* cset);
 	int32 check_extra_link(int32 playerid);
 	int32 check_extra_link(int32 playerid, card* pcard, int32 sequence);
@@ -567,6 +574,7 @@ public:
 	void change_target_player(uint8 chaincount, uint8 playerid);
 	void change_target_param(uint8 chaincount, int32 param);
 	void remove_counter(uint32 reason, card* pcard, uint32 rplayer, uint32 s, uint32 o, uint32 countertype, uint32 count);
+	void remove_field_counter(uint8 playerid, uint8 uplayer,uint32 zone, uint16 countertype, uint16 count ,uint32 reason);
 	void remove_overlay_card(uint32 reason, card* pcard, uint32 rplayer, uint32 s, uint32 o, uint16 min, uint16 max);
 	void get_control(card_set* targets, effect* reason_effect, uint32 reason_player, uint32 playerid, uint32 reset_phase, uint32 reset_count, uint32 zone);
 	void get_control(card* target, effect* reason_effect, uint32 reason_player, uint32 playerid, uint32 reset_phase, uint32 reset_count, uint32 zone);
@@ -601,6 +609,7 @@ public:
 	int32 special_summon_rule(uint16 step, uint8 sumplayer, card* target, uint32 summon_type, uint32 action_type);
 
 	int32 remove_counter(uint16 step, uint32 reason, card* pcard, uint8 rplayer, uint8 s, uint8 o, uint16 countertype, uint16 count);
+	int32 remove_field_counter(uint16 step, uint32 reason , uint8 rplayer,uint8 tplayer, uint16 countertype, uint16 count ,uint32 zone);
 	int32 remove_overlay_card(uint16 step, uint32 reason, card* pcard, uint8 rplayer, uint8 s, uint8 o, uint16 min, uint16 max);
 	int32 get_control(uint16 step, effect* reason_effect, uint8 reason_player, group* targets, uint8 playerid, uint16 reset_phase, uint8 reset_count, uint32 zone);
 	int32 swap_control(uint16 step, effect* reason_effect, uint8 reason_player, group* targets1, group* targets2, uint16 reset_phase, uint8 reset_count);
@@ -646,6 +655,7 @@ public:
 	int32 select_position(uint16 step, uint8 playerid, uint32 code, uint8 positions);
 	int32 select_tribute(uint16 step, uint8 playerid, uint8 cancelable, uint8 min, uint8 max);
 	int32 select_counter(uint16 step, uint8 playerid, uint16 countertype, uint16 count, uint8 s, uint8 o);
+	int32 select_field_counter(uint16 step, uint8 playerid, uint16 countertype, uint16 count, uint32 zone);
 	int32 select_with_sum_limit(int16 step, uint8 playerid, int32 acc, int32 min, int32 max);
 	int32 sort_card(int16 step, uint8 playerid);
 	int32 announce_race(int16 step, uint8 playerid, int32 count, int32 available);
@@ -757,6 +767,7 @@ public:
 #define PROCESSOR_SORT_CARD			25
 #define PROCESSOR_SELECT_RELEASE	26
 #define PROCESSOR_SELECT_TRIBUTE	27
+#define PROCESSOR_SELECT_FIELD_COUNTER	28
 #define PROCESSOR_POINT_EVENT		30
 #define PROCESSOR_QUICK_EFFECT		31
 #define PROCESSOR_IDLE_COMMAND		32
@@ -800,6 +811,7 @@ public:
 #define PROCESSOR_REMOVE_COUNTER	81
 #define PROCESSOR_ATTACK_DISABLE	82
 #define PROCESSOR_ACTIVATE_EFFECT	83
+#define PROCESSOR_REMOVE_FIELD_COUNTER	84
 
 #define PROCESSOR_ANNOUNCE_RACE		110
 #define PROCESSOR_ANNOUNCE_ATTRIB	111

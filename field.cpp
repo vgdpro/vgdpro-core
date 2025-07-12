@@ -78,6 +78,7 @@ field::field(duel* pduel) {
 		player[i].list_gzone.reserve(75);
 		player[i].list_remove.reserve(75);
 		player[i].list_extra.reserve(30);
+		player[i].list_field_counters.resize(7);
 	}
 	returns = { 0 };
 	temp_card = nullptr;
@@ -1051,6 +1052,71 @@ void field::filter_must_use_mzone(uint8 playerid, uint8 uplayer, uint32 reason, 
 		else
 			*flag |= ~(value >> 16) & 0x7f;
 	}
+}
+void field::remove_field_counters(uint16 countertype, uint16 count, uint8 uplayer, uint8 playerid , int32 sequence) {
+	auto& counter_map = pduel->game_field->player[uplayer].list_field_counters[sequence];
+	uint16 cttype_to_find = (countertype & 0x7FFF) | (playerid << 15);
+	auto it = counter_map.find(cttype_to_find);
+
+	if(it == counter_map.end())
+		return;
+	if(it->second[1] <= count) {
+		uint16 remains = count;
+		remains -= it->second[1];
+		it->second[1] = 0;
+		if(it->second[0] <= remains)
+			counter_map.erase(it);
+		else it->second[0] -= remains;
+	} else {
+		it->second[1] -= count;
+	}
+
+
+	pduel->write_buffer8(MSG_REMOVE_FIELD_COUNTER);
+	pduel->write_buffer16(countertype);
+	pduel->write_buffer8(uplayer);
+	pduel->write_buffer8(playerid);
+	pduel->write_buffer8(sequence);
+	pduel->write_buffer16(count);
+
+	return;
+}
+void field::add_field_counter(uint8 playerid, uint8 uplayer, uint8 seq, uint16 countertype, uint16 count, uint8 singly){
+	// if(!is_can_add_counter(playerid, countertype, count, singly, 0))
+	// 	return FALSE;
+	uint16 cttype = countertype;
+	cttype = (cttype & 0x7FFF) | (uplayer << 15);
+	auto pr = player[playerid].list_field_counters[seq].emplace(cttype, counter_map::mapped_type());
+	auto cmit = pr.first;
+	if(pr.second) {
+		cmit->second[0] = 0;
+		cmit->second[1] = 0;
+	}
+	uint16 pcount = count;
+	// if(singly) {
+	// 	effect_set eset;
+	// 	uint16 limit = 0;
+	// 	filter_effect(EFFECT_COUNTER_LIMIT + cttype, &eset);
+	// 	for(int32 i = 0; i < eset.size(); ++i)
+	// 		limit = eset[i]->get_value();
+	// 	if(limit) {
+	// 		uint16 mcount = limit - get_counter(cttype);
+	// 		if(pcount > mcount)
+	// 			pcount = mcount;
+	// 	}
+	// }
+	if(countertype & COUNTER_WITHOUT_PERMIT)
+		cmit->second[0] += pcount;
+	else
+		cmit->second[1] += pcount;
+	pduel->write_buffer8(MSG_ADD_FIELD_COUNTER);
+	pduel->write_buffer16(countertype);
+	pduel->write_buffer8(playerid);
+	pduel->write_buffer8(uplayer);
+	pduel->write_buffer8(seq);
+	pduel->write_buffer16(pcount);
+	// pduel->game_field->raise_single_event(pduel->game_field->core.reason_effect->active_handler, 0, EVENT_ADD_COUNTER + countertype, pduel->game_field->core.reason_effect, REASON_EFFECT, uplayer, playerid, pcount);
+	// pduel->game_field->process_single_event();
 }
 void field::get_linked_cards(uint8 self, uint8 s, uint8 o, card_set* cset) {
 	cset->clear();
@@ -2749,6 +2815,42 @@ uint32 field::get_field_counter(uint8 self, uint8 s, uint8 o, uint16 countertype
 		}
 		self = 1 - self;
 		c = o;
+	}
+	return count;
+}
+uint32 field::get_field_counters(counter_map counter_map, uint16 countertype, uint8 playerid) {
+	uint16 cttype = countertype;
+	cttype = (cttype & 0x7FFF) | (playerid << 15);
+	auto cmit = counter_map.find(cttype);
+	if(cmit == counter_map.end())
+		return 0;
+	return cmit->second[0] + cmit->second[1];
+}
+uint32 field::get_field_counter_num(uint32 zone, uint16 countertype,uint8 playerid) {
+	uint32 count = 0;
+	if(zone!=-1){
+		// for(int32 p = 0; p < 2; ++p) {
+		// 	if(c) {
+		// 		for(auto& pcard : player[self].list_mzone) {
+		// 			if(pcard)
+		// 				count += pcard->get_counter(countertype);
+		// 		}
+		// 		for(auto& pcard : player[self].list_szone) {
+		// 			if(pcard)
+		// 				count += pcard->get_counter(countertype);
+		// 		}
+		// 	}
+		// }
+		// self = 1 - self;
+		// c = o;
+	}
+	else {
+		for(auto& counter_map : player[0].list_field_counters) {
+			count += get_field_counters(counter_map, countertype,playerid);
+		}
+		for(auto& counter_map : player[1].list_field_counters) {
+			count += get_field_counters(counter_map, countertype,playerid);
+		}
 	}
 	return count;
 }

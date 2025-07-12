@@ -109,6 +109,10 @@ void field::change_target_param(uint8 chaincount, int32 param) {
 void field::remove_counter(uint32 reason, card* pcard, uint32 rplayer, uint32 s, uint32 o, uint32 countertype, uint32 count) {
 	add_process(PROCESSOR_REMOVE_COUNTER, 0, nullptr, (group*)pcard, (rplayer << 16) + (s << 8) + o, countertype, count, reason);
 }
+void field::remove_field_counter(uint8 playerid, uint8 uplayer,uint32 zone, uint16 countertype, uint16 count ,uint32 reason) {
+	uint32 param = (uplayer << 24) + (playerid << 16) + countertype;
+	add_process(PROCESSOR_REMOVE_FIELD_COUNTER, 0, nullptr, nullptr, reason, param, count, zone);
+}
 void field::remove_overlay_card(uint32 reason, card* pcard, uint32 rplayer, uint32 s, uint32 o, uint16 min, uint16 max) {
 	add_process(PROCESSOR_REMOVE_OVERLAY, 0, nullptr, (group*)pcard, (rplayer << 16) + (s << 8) + o, (max << 16) + min, reason);
 }
@@ -764,6 +768,90 @@ int32 field::remove_counter(uint16 step, uint32 reason, card* pcard, uint8 rplay
 			if(returns.svalue[i] > 0)
 				core.select_cards[i]->remove_counter(countertype, returns.svalue[i]);
 		return FALSE;
+	}
+	case 3: {
+		raise_event((card*)0, EVENT_REMOVE_COUNTER + countertype, core.reason_effect, reason, rplayer, rplayer, count);
+		process_instant_event();
+		return FALSE;
+	}
+	case 4: {
+		returns.ivalue[0] = 1;
+		return TRUE;
+	}
+	}
+	return TRUE;
+}
+int32 field::remove_field_counter(uint16 step, uint32 reason , uint8 rplayer,uint8 tplayer, uint16 countertype, uint16 count ,uint32 zone) {
+	switch(step) {
+	case 0: {
+		core.select_options.clear();
+		core.select_effects.clear();
+		// FILE *fp = fopen("error.log", "at");
+		// fprintf(fp, "%d\n", (int *)zone);
+		// fclose(fp);
+		if(get_field_counter_num(zone, countertype,tplayer)>count){
+			core.select_options.push_back(10);
+			core.select_effects.push_back(0);
+		}
+		// auto pr = effects.continuous_effect.equal_range(EFFECT_RCOUNTER_REPLACE + countertype);
+		// tevent e;
+		// e.event_cards = 0;
+		// e.event_player = rplayer;
+		// e.event_value = count;
+		// e.reason = reason;
+		// e.reason_effect = core.reason_effect;
+		// e.reason_player = rplayer;
+		// for(auto eit = pr.first; eit != pr.second;) {
+		// 	effect* peffect = eit->second;
+		// 	++eit;
+		// 	if(peffect->is_activateable(peffect->get_handler_player(), e)) {
+		// 		core.select_options.push_back(peffect->description);
+		// 		core.select_effects.push_back(peffect);
+		// 	}
+		// }
+		// returns.ivalue[0] = 0;
+		// if(core.select_options.size() == 0)
+		// 	return TRUE;
+		// if(core.select_options.size() == 1)
+		// 	returns.ivalue[0] = 0;
+		// else if(core.select_effects[0] == 0 && core.select_effects.size() == 2)
+		// 	add_process(PROCESSOR_SELECT_EFFECTYN, 0, 0, (group*)core.select_effects[1]->handler, rplayer, 220);
+		// else
+		// 	add_process(PROCESSOR_SELECT_OPTION, 0, 0, 0, rplayer, 0);
+		return FALSE;
+	}
+	case 1: {
+		// effect* peffect = core.select_effects[returns.ivalue[0]];
+		// if(peffect) {
+		// 	tevent e;
+		// 	e.event_cards = 0;
+		// 	e.event_player = rplayer;
+		// 	e.event_value = count;
+		// 	e.reason = reason;
+		// 	e.reason_effect = core.reason_effect;
+		// 	e.reason_player = rplayer;
+		// 	solve_continuous(rplayer, peffect, e);
+		// 	core.units.begin()->step = 3;
+		// 	return FALSE;
+		// }
+		// if(pcard) {
+		// 	returns.ivalue[0] = pcard->remove_counter(countertype, count);
+		// 	core.units.begin()->step = 3;
+		// 	return FALSE;
+		// }
+		add_process(PROCESSOR_SELECT_FIELD_COUNTER, 0, nullptr, nullptr,tplayer, countertype, count, zone);
+		return FALSE;
+	}
+	case 2: {
+		for (uint32 i = 0; i < returns.ivalue[0]; i+=2) {
+			uint8 controler = (returns.svalue[i] >> 8) & 0xff;  
+			uint8 sequence  = returns.svalue[i] & 0xff;         
+			uint16 opParam  = returns.svalue[i++]; 
+
+			pduel->game_field->remove_field_counters(countertype ,opParam, controler, tplayer, sequence);
+
+			return false;
+		}
 	}
 	case 3: {
 		raise_event((card*)0, EVENT_REMOVE_COUNTER + countertype, core.reason_effect, reason, rplayer, rplayer, count);
