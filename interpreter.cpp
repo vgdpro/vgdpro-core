@@ -39,12 +39,12 @@ interpreter::interpreter(duel* pd): coroutines(256) {
 	scriptlib::open_duellib(lua_state);
 	scriptlib::open_debuglib(lua_state);
 	//extra scripts
-	load_script("./script/constant.lua");
-	load_script("./script/utility.lua");
-	load_script("./script/procedure.lua");
-	// load_script("./script/vgdefinition.lua");
-	// load_script("./script/vgfuncLib.lua");
-	// load_script("./script/vgd.lua");
+	// load_script("./script/constant.lua");
+	// load_script("./script/utility.lua");
+	// load_script("./script/procedure.lua");
+	load_script("./script/vgdefinition.lua");
+	load_script("./script/vgfuncLib.lua");
+	load_script("./script/vgd.lua");
 }
 interpreter::~interpreter() {
 	lua_close(lua_state);
@@ -363,10 +363,10 @@ int32 interpreter::call_code_function(uint32 code, const char* f, uint32 param_c
 		return OPERATION_FAIL;
 	}
 	load_card_script(code);
-	// if (code)
-	// 	load_card_script(code);
-	// else
-	// 	lua_getglobal(current_state, "VgD");
+	if (code)
+		load_card_script(code);
+	else
+		lua_getglobal(current_state, "VgD");
 	luaL_checkstack(current_state, 1, nullptr);
 	lua_getfield(current_state, -1, f);
 	if (!lua_isfunction(current_state, -1)) {

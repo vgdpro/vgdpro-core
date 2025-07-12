@@ -3444,7 +3444,7 @@ int32 scriptlib::card_set_spsummon_once(lua_State *L) {
 }
 
 static const struct luaL_Reg cardlib[] = {
-	// { "GetCardRegistered", scriptlib::card_get_card_registered },
+	{ "GetCardRegistered", scriptlib::card_get_card_registered },
 	{ "GetCode", scriptlib::card_get_code },
 	{ "GetOriginalCode", scriptlib::card_get_origin_code },
 	{ "GetOriginalCodeRule", scriptlib::card_get_origin_code_rule },
