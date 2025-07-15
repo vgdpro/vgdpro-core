@@ -11,6 +11,8 @@
 #include "group.h"
 #include "interpreter.h"
 #include <algorithm>
+#include <bitset>
+#include <intrin.h>
 
 int32 field::negate_chain(uint8 chaincount) {
 	if(core.current_chain.size() == 0)
@@ -789,10 +791,12 @@ int32 field::remove_field_counter(uint16 step, uint32 reason , uint8 rplayer,uin
 		// FILE *fp = fopen("error.log", "at");
 		// fprintf(fp, "%d\n", (int *)zone);
 		// fclose(fp);
-		if(get_field_counter_num(zone, countertype,tplayer)>count){
+		if(get_field_counter_num(zone, countertype,tplayer)>=count){
 			core.select_options.push_back(10);
 			core.select_effects.push_back(0);
 		}
+		if(core.select_options.size() == 0)
+			return TRUE;
 		// auto pr = effects.continuous_effect.equal_range(EFFECT_RCOUNTER_REPLACE + countertype);
 		// tevent e;
 		// e.event_cards = 0;
@@ -834,24 +838,38 @@ int32 field::remove_field_counter(uint16 step, uint32 reason , uint8 rplayer,uin
 		// 	core.units.begin()->step = 3;
 		// 	return FALSE;
 		// }
-		// if(pcard) {
-		// 	returns.ivalue[0] = pcard->remove_counter(countertype, count);
-		// 	core.units.begin()->step = 3;
-		// 	return FALSE;
-		// }
+		
+		if(std::bitset<32>(zone).count() == 1) {
+			for(int i = 0;i<player[0].list_field_counters.size();i++){
+				if((zone & (1 << i)) !=0){
+					remove_field_counters(countertype, count, 0, tplayer, i);
+					break;
+				}
+				if((zone & (1 << (i))) != 0){
+					remove_field_counters(countertype, count, 0, tplayer, i);
+					break;
+				}
+			}
+			returns.ivalue[0] = 1;
+			core.units.begin()->step = 3;
+			return FALSE;
+		}
 		add_process(PROCESSOR_SELECT_FIELD_COUNTER, 0, nullptr, nullptr,tplayer, countertype, count, zone);
 		return FALSE;
 	}
 	case 2: {
-		for (uint32 i = 0; i < returns.ivalue[0]; i+=2) {
-			uint8 controler = (returns.svalue[i] >> 8) & 0xff;  
-			uint8 sequence  = returns.svalue[i] & 0xff;         
-			uint16 opParam  = returns.svalue[i++]; 
+		for (uint32 i = 0; i < SIZE_RETURN_VALUE; i+=2) {
+			int count = returns.svalue[i+1] & 0xff; // count of counters
+			if(count >= 16)
+				break;
+			uint8 controler = (returns.svalue[i+1] >> 8) & 0xff;  
+			uint8 sequence  = returns.svalue[i+1] & 0xff;         
+			uint16 opParam  = returns.svalue[i];
 
 			pduel->game_field->remove_field_counters(countertype ,opParam, controler, tplayer, sequence);
 
-			return false;
 		}
+		return false;
 	}
 	case 3: {
 		raise_event((card*)0, EVENT_REMOVE_COUNTER + countertype, core.reason_effect, reason, rplayer, rplayer, count);

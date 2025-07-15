@@ -622,6 +622,10 @@ int32 field::select_field_counter(uint16 step, uint8 playerid, uint16 countertyp
 		core.select_cards.clear();
 		size_t index = 0;
 		for(auto& counter_map : player[0].list_field_counters) {
+			if(((zone & (1 << index)) == 0) && zone!=-1){
+				index++;
+				continue;
+			}
 			if(!counter_map.empty() && get_field_counters(counter_map, countertype,playerid)) {
 				total += get_field_counters(counter_map, countertype,playerid);
 				field_counters[index] = get_field_counters(counter_map, countertype,playerid);
@@ -631,6 +635,10 @@ int32 field::select_field_counter(uint16 step, uint8 playerid, uint16 countertyp
 		}
 		index = 0; 
 		for(auto& counter_map : player[1].list_field_counters) {
+			if(((zone & (1 << (index + 16))) == 0) && zone!=-1){
+				index++;
+				continue;
+			}
 			if(!counter_map.empty() && get_field_counters(counter_map, countertype,playerid)) {
 				total += get_field_counters(counter_map, countertype,playerid);
 				field_counters[index+pduel->game_field->player[0].list_mzone.size()] = get_field_counters(counter_map, countertype,playerid);
@@ -659,13 +667,13 @@ int32 field::select_field_counter(uint16 step, uint8 playerid, uint16 countertyp
 	} else {
 		uint16 total_removed = 0;
 		for (uint32 i = 0; i < SIZE_RETURN_VALUE; i+=2) {
-			int count = returns.svalue[i++] & 0xff; // count of counters
+			int count = returns.svalue[i+1] & 0xff; // count of counters
 			if(count >= 16)
 				break;
 			
-			uint8 controler = (returns.svalue[i] >> 8) & 0xf;  
-			uint8 sequence  = returns.svalue[i] & 0xf;         
-			uint16 opParam  = returns.svalue[i++]; 
+			uint8 controler = (returns.svalue[i+1] >> 8) & 0xf;  
+			uint8 sequence  = returns.svalue[i+1] & 0xf;         
+			uint16 opParam  = returns.svalue[i]; 
 
 			if (controler > 1 || sequence >= pduel->game_field->player[controler].list_mzone.size()) {
 				pduel->write_buffer8(MSG_RETRY);

@@ -4673,7 +4673,7 @@ int32 scriptlib::duel_remove_field_counter(lua_State *L){
 	uint32 reason = (uint32)lua_tointeger(L, 4);
 	uint32 zone = -1;
 	if(lua_gettop(L) > 4)
-		zone = lua_toboolean(L, 5);
+		zone = lua_tointeger(L, 5);
 	pduel->game_field->remove_field_counter(playerid, pduel->game_field->core.reason_player,zone, countertype, count , reason);
 	return lua_yieldk(L, 0, (lua_KContext)pduel, [](lua_State *L, int32 status, lua_KContext ctx) {
 		duel* pduel = (duel*)ctx;

@@ -2829,20 +2829,20 @@ uint32 field::get_field_counters(counter_map counter_map, uint16 countertype, ui
 uint32 field::get_field_counter_num(uint32 zone, uint16 countertype,uint8 playerid) {
 	uint32 count = 0;
 	if(zone!=-1){
-		// for(int32 p = 0; p < 2; ++p) {
-		// 	if(c) {
-		// 		for(auto& pcard : player[self].list_mzone) {
-		// 			if(pcard)
-		// 				count += pcard->get_counter(countertype);
-		// 		}
-		// 		for(auto& pcard : player[self].list_szone) {
-		// 			if(pcard)
-		// 				count += pcard->get_counter(countertype);
-		// 		}
-		// 	}
-		// }
-		// self = 1 - self;
-		// c = o;
+		size_t index = 0;
+		for(auto& counter_map : player[0].list_field_counters) {
+			if(((zone & (1 << index)) != 0)){
+				count += get_field_counters(counter_map, countertype,playerid);
+			}
+			index++;
+		}
+		index = 0;
+		for(auto& counter_map : player[1].list_field_counters) {
+			if(((zone & (1 << (index + 16))) != 0)){
+				count += get_field_counters(counter_map, countertype,playerid);
+			}
+			index++;
+		}
 	}
 	else {
 		for(auto& counter_map : player[0].list_field_counters) {
