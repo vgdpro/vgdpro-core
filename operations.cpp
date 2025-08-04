@@ -12,7 +12,11 @@
 #include "interpreter.h"
 #include <algorithm>
 #include <bitset>
+#ifdef _WIN32
 #include <intrin.h>
+#else
+#include <x86intrin.h>
+#endif
 
 int32 field::negate_chain(uint8 chaincount) {
 	if(core.current_chain.size() == 0)
